@@ -1,0 +1,44 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+out/
+
+# Claude Code local configuration
+.claude/*.local.json
+
+# Gradle / Kotlin
+.gradle/
+build/
+.kotlin/
+
+# Backend
+backend/.quarkus/
+# Local config override with production secrets
+backend/config/application.properties
+# Built SPA copied into the backend
+backend/src/main/resources/META-INF/resources/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dev-dist/
+frontend/src/paraglide/
+
+# Runtime data (user accounts, games)
+data/
+
+# Playwright
+playwright_screenshots/
+.playwright-mcp/
+
+# OS / misc
+.DS_Store
+Thumbs.db
+*.log
+nul
+.env
+.env.local
+
+# Keep the Gradle wrapper jar
+!gradle/wrapper/gradle-wrapper.jar
