@@ -1,0 +1,29 @@
+{
+  "name": "mr-right-frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+    "dev": "vite",
+    "build": "npm run i18n && tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "npm run i18n && tsc",
+    "test": "npm run i18n && vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.11.3",
+    "preact": "^10.29.8",
+    "preact-iso": "^2.12.2"
+  },
+  "devDependencies": {
+    "@inlang/paraglide-js": "^2.29.1",
+    "@preact/preset-vite": "^2.10.6",
+    "jsdom": "^30.1.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.4",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.5"
+  }
+}

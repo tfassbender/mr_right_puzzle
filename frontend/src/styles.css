@@ -1,0 +1,154 @@
+/* Placeholder styling – the look & feel will be designed later. Mobile first. */
+:root {
+  --color-primary: #6b2d5c;
+  --color-primary-contrast: #fff;
+  --color-background: #fbf6ee;
+  --color-surface: #fff;
+  --color-text: #2b2228;
+  --color-muted: #6f6168;
+  --color-border: #ddd0c4;
+  --color-error: #b3261e;
+  --radius: 10px;
+  --space: 16px;
+
+  color-scheme: light;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+h1 {
+  margin: 0 0 var(--space);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.5rem;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+  padding: 10px var(--space);
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.app-title {
+  color: inherit;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-actions .link-button {
+  color: inherit;
+}
+
+.app-main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space);
+}
+
+.card {
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: var(--space);
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field small,
+.muted {
+  color: var(--color-muted);
+}
+
+/* 16px keeps iOS Safari from zooming into focused inputs. */
+input,
+select,
+button {
+  font: inherit;
+  font-size: 16px;
+}
+
+input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+button {
+  cursor: pointer;
+}
+
+.primary {
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border: 0;
+  border-radius: var(--radius);
+}
+
+.primary:disabled {
+  opacity: 0.6;
+}
+
+.link-button {
+  padding: 0;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+}
