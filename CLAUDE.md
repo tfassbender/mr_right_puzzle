@@ -10,9 +10,9 @@ Mobile first, German + English, playable offline.
 - `doc/architecture.md` – packages, data model, REST API, saving/sync, offline, sharing
 - `README.md` – status and dev commands
 
-**Status:** project setup with login is done. The puzzle rules are **not clarified yet** (the user is
-getting the rule pages of the book). Don't implement the puzzle model, generator or game logic until
-the rules are known – ask instead.
+**Status:** project setup with login is done. The puzzle rules (attributes, clue types, finalists +
+tie-break) are decided in `doc/puzzle-analysis.md`. Next step: update the puzzle model in
+`doc/architecture.md`, then implement the puzzle model and generator.
 
 ## Build, run & test
 

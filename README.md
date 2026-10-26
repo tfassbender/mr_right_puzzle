@@ -8,7 +8,8 @@ among hundreds of bachelors by crossing out everyone who doesn't match the clues
 - ✅ Puzzle analysis and decisions – [`doc/puzzle-analysis.md`](doc/puzzle-analysis.md)
 - ✅ Architecture – [`doc/architecture.md`](doc/architecture.md)
 - ✅ Project setup: Gradle monorepo, Quarkus backend with login, Preact frontend with i18n (en/de) and PWA
-- ⬜ Puzzle rules (waiting for the rule pages of the book), generator, game view, sync
+- ✅ Puzzle rules analysed and decided (`doc/puzzle-analysis.md`)
+- ⬜ Generator, game view, sync
 
 ## Tech Stack
 

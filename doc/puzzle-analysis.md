@@ -1,7 +1,9 @@
 # Puzzle Analysis: "Emma's Perfect Match"
 
-Source: cover photo ([book_cover.jpg](book_cover.jpg)) plus publisher listings (Hachette, Penguin Random House, Google Books, Quercus, Planeta).
-The book was released in September 2026 – there are no reviews, rule pages or solved examples online yet.
+Sources: photos of the German edition – cover ([book_cover.jpg](book_cover.jpg)), Emma's criteria
+([book_criteria.jpg](book_criteria.jpg)), the legend ([book_legend.jpg](book_legend.jpg)), a directory page
+([book_directory_page.jpg](book_directory_page.jpg)) and the tie-break on page 215 ([book_tiebreak.jpg](book_tiebreak.jpg)) – plus publisher listings
+(Hachette, Penguin Random House, Google Books, Quercus, Planeta).
 Everything marked *(assumption)* still needs to be verified against the actual book.
 
 ## The Book
@@ -14,35 +16,73 @@ Everything marked *(assumption)* still needs to be verified against the actual b
 
 ## Puzzle Mechanics
 
-- A directory lists **6,400 bachelors**, each with a name and a set of attributes shown as icons/abbreviations.
-- Mrs Godwin gives a list of requirements: **12 clues** (one listing says 11).
-- The player eliminates candidates by crossing them out, clue by clue, until **exactly one** suitor remains.
-- Pure elimination logic – no hidden information, just careful matching of symbols. The appeal is the calm, methodical crossing out.
+- A directory lists **6,400 bachelors**, each with a name and a row of attribute icons/abbreviations.
+- "Emmas Kriterien": **12 clues**, all of which must hold for the right gentleman.
+- The player uses the legend to cross out unsuitable bachelors one after another.
+- After all 12 clues **two candidates remain** ("das Verzeichnis hält gleich zwei potenzielle Verehrer bereit").
+- **Tie-break (page 215):** Mr Right is the one of the two with the **fewest consonants in his full name**
+  (first name + surname, **y counts as a consonant** here). The player writes his name onto the page.
+- Pure elimination logic – no hidden information, just careful matching of symbols.
 
-### Attributes mentioned by publishers
+### Attributes (legend)
 
-- Eye colour
-- Hair colour
-- Star sign (zodiac)
-- Size of fortune
-- Number of vowels in the first name
+Six attributes, each bachelor has **exactly one value per attribute** (verified on a directory page):
 
-### Attributes visible on the cover *(assumption)*
+| Attribute (German)              | Values                                                                                 | Count |
+|---------------------------------|----------------------------------------------------------------------------------------|-------|
+| Income (Jährliches Einkommen)   | £ = £1,000+, ££ = £2,000+, £££ = £4,000+, ££££ = £10,000+ (ordinal)                      | 4     |
+| Star sign element (Sternzeichen-Element) | air (Luft), fire (Feuer), water (Wasser), earth (Erde) – only the element, not the sign | 4     |
+| Eye colour (Augenfarbe)         | Br brown, BG brown-green, Bst amber (Bernstein), Gn green, Bl blue                      | 5     |
+| Hair colour (Haarfarbe)         | Bl blond, Br brown, S black (Schwarz), Rb auburn (Rotbraun)                             | 4     |
+| Temperament (Naturell)          | brooding (grüblerisch), charming, reserved, amiable (liebenswürdig), dashing (verwegen) – face icons | 5     |
+| Interests (Interessen)          | intellectual, musical (musisch), sporty, sociable (gesellig)                            | 4     |
 
-Each entry seems to be a name followed by a row of icons:
-
-| Icon                         | Likely meaning                         | Codes seen                                                  |
-|------------------------------|----------------------------------------|-------------------------------------------------------------|
-| Eye + abbreviation           | Eye colour                             | Bl, Br, BG, Gr, Bst                                         |
-| Head + abbreviation          | Hair colour                            | S, Br, Bl, Rb (Google Books additionally shows Hz, Au, Gn, Bk) |
-| £ to ££££                    | Fortune, probably 4 levels             |                                                             |
-| Small icons (droplet, flame, …) | Star sign or its element (water, fire, …) |                                                        |
-| Face icons (smiley, cat, …)  | Unknown – maybe temperament or hobby   |                                                             |
-| "MR" prefix vs. full name    | Unknown – possibly an attribute itself |                                                             |
+Plus the **name** (first name + surname), which several clues refer to.
 
 Notes:
+- The extra Google Books hair codes (Hz, Au, Gn, Bk) are probably English edition abbreviations –
+  the German legend has exactly the values above.
 - 6,400 = 80 × 80 – might be 80 first names × 80 surnames *(assumption)*.
-- The vowel clue implies that name properties are part of the puzzle, not just decoration.
+
+### Directory layout (page 37)
+
+- Two columns of 15 entries → 30 per page; 6,400 / 30 ≈ 213 pages, which fits the reveal on page 215.
+- Each entry: `MR FIRSTNAME SURNAME` in capitals (the "MR" is just a fixed prefix), below it one icon row in a
+  fixed order: income, element, eye colour, hair colour, temperament, interest.
+- Entries are **not sorted** – neither by name nor by attribute.
+- First names and surnames repeat a lot (three Alistairs and three Cornwallis on one page), so names are
+  combined freely from two lists. Whether a full name can appear twice in the directory is unknown.
+
+### Emma's criteria (the 12 clues of the German edition)
+
+| #  | Clue (paraphrased)                                         | Clue type                        |
+|----|------------------------------------------------------------|----------------------------------|
+| 1  | No preference for body build, but **not blond** hair         | attribute is not X               |
+| 2  | Income **at least £4,000** (£££ or ££££)                     | ordinal attribute at least X     |
+| 3  | Initials of first name and surname are **not identical**     | name: initials differ            |
+| 4  | Temperament **brooding or reserved**                         | attribute is one of {X, Y}       |
+| 5  | **Both initials** in the first half of the alphabet (A–M)    | name: initials in letter range   |
+| 6  | Interests **intellectual or sociable**                       | attribute is one of {X, Y}       |
+| 7  | Star sign element **air or fire** (Emma is Aquarius)         | attribute is one of {X, Y}       |
+| 8  | Surname does **not start and end with the same letter**      | name: first ≠ last letter        |
+| 9  | First name has **exactly three vowels**                      | name: vowel count                |
+| 10 | Eye colour **green or blue** (Emma has green eyes)           | attribute is one of {X, Y}       |
+| 11 | Full name contains **no H**                                  | name: letter not contained       |
+| 12 | Surname has **exactly two vowels**                           | name: vowel count                |
+
+Vowels are **a, e, i, o, u – not y** (footnote in the book).
+
+### Observations
+
+- **Every clue is an independent filter**; all clues are combined with AND. A clue may allow several values of
+  one attribute (OR). There are **no conditional or cross-attribute clues** ("if blue eyes, then …").
+- 6 of 12 clues are about the **name** – name properties are a core part of the puzzle, not decoration.
+- Clues carry **flavour text** (Emma's own star sign, her green eyes, why she likes intellectual men).
+  Clue 1 even mentions body build, which is not an attribute at all – a deliberate distraction.
+- Attribute clues and name clues are mixed in the list, not grouped.
+- Rough pass rates: the attribute clues let ~1.5 % through (3/4 · 2/4 · 2/5 · 2/4 · 2/4 · 2/5), the name clues
+  roughly another 2–3 % – which fits ~2 survivors out of 6,400. The book's clues look like plain random filters;
+  no single clue needs to be "the one" that removes a specific bachelor.
 
 ## Implementation Idea (first draft)
 
@@ -65,14 +105,13 @@ Notes:
 
 ## Open Points
 
-### From the book (photos pending)
-- Exact rules, attribute list, symbol legend and clue types
-- Are clues independent filters, or are there combined/conditional clues ("if blue eyes, then …")?
+### From the book
+- None left from the book pages.
 
 ### Postponed (decide later)
 - **Player aids**: some are needed (undo, remaining count, …), details open. Auto-filtering would remove the actual game, so keep it limited.
 - **Look & feel**: Regency theme with our own icons, names and texts – the book's content must not be copied (copyright).
-- **Name lists**: English names (not translated); ~80 first names and ~80 surnames; define the vowel rule (does "y" count?).
+- **Name lists**: English names (not translated); ~80 first names and ~80 surnames. Vowel rule follows the book: a, e, i, o, u (not y).
 - **Sharing**: optional feature, details (locking while the owner plays) later.
 
 
@@ -83,6 +122,16 @@ Notes:
 - Backend language: **Kotlin** (like `avalons_final_stand`).
 
 ### Game
+- **Attributes**: the book's six attributes and their values are used 1:1, with our own icons
+  (income, star sign element, eye colour, hair colour, temperament, interest).
+- **Ending**: the number of suitors left after all clues (*finalists*) is configurable from **1 to 5**
+  (book: 2). With more than one finalist, the book's tie-break picks Mr Right: fewest consonants in the
+  full name (y counts as a consonant). The generator guarantees that this minimum is unique.
+  With one finalist there is no tie-break step.
+- **Clue types**: only the book's clue types (see table above), with randomised parameters – e.g. a different
+  attribute value, letter range, vowel count or forbidden letter per puzzle.
+- **Names**: every full name is unique within a directory.
+- **Directory order**: unsorted, like the book. Sorting/filtering belongs to the postponed player aids.
 - **Size and difficulty** are configurable when creating a new game (number of suitors, number of clues).
 - **Solving**: the player marks a candidate as Mr Right and confirms it in a dialog.
   A wrong answer is reported and counted. There is no "losing" – the game continues.

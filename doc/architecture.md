@@ -299,6 +299,8 @@ The `Game` model can get a `sharedWith: List<UserId>` field without changing the
 
 ## Open Points
 
-- Rules, attribute list and clue types from the book (photos pending) → extend the puzzle model.
+- Attributes, clue types and the finalist/tie-break ending are decided in `puzzle-analysis.md`; the puzzle
+  model above (`Suitor`, `Clue`, `PuzzleConfig` with a `finalistCount`) and the generation algorithm still
+  have to be updated to match.
 - Player aids, look & feel, name lists, sharing details (postponed).
 - Confirm assumptions: constructive generation, offline solution check via hash, 30-day token lifetime.
