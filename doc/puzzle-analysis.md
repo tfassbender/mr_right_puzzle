@@ -84,15 +84,9 @@ Vowels are **a, e, i, o, u – not y** (footnote in the book).
   roughly another 2–3 % – which fits ~2 survivors out of 6,400. The book's clues look like plain random filters;
   no single clue needs to be "the one" that removes a specific bachelor.
 
-## Implementation Idea (first draft)
+## Implementation
 
-1. **Generate suitors**: combine first names/surnames and random attribute values.
-2. **Pick the target** ("Mr Right") at random.
-3. **Generate clues** that are true for the target and eliminate others,
-   e.g. "fortune at least £££", "fire sign", "not blue eyes", "exactly 3 vowels in his first name".
-   Repeat until only the target remains.
-4. **Minimality check**: removing any clue must leave more than one candidate – every clue matters.
-5. **i18n**: clue texts and attribute labels via message bundles; names stay untranslated.
+The puzzle model and the generation algorithm are described in [architecture.md](architecture.md#puzzle-model).
 
 ### Mobile considerations
 
@@ -111,7 +105,8 @@ Vowels are **a, e, i, o, u – not y** (footnote in the book).
 ### Postponed (decide later)
 - **Player aids**: some are needed (undo, remaining count, …), details open. Auto-filtering would remove the actual game, so keep it limited.
 - **Look & feel**: Regency theme with our own icons, names and texts – the book's content must not be copied (copyright).
-- **Name lists**: English names (not translated); ~80 first names and ~80 surnames. Vowel rule follows the book: a, e, i, o, u (not y).
+- **Name lists**: the actual 120 first names and 120 surnames (English, not translated).
+- **Clue flavour texts** (like Emma's star sign or green eyes in the book).
 - **Sharing**: optional feature, details (locking while the owner plays) later.
 
 
@@ -130,11 +125,37 @@ Vowels are **a, e, i, o, u – not y** (footnote in the book).
   With one finalist there is no tie-break step.
 - **Clue types**: only the book's clue types (see table above), with randomised parameters – e.g. a different
   attribute value, letter range, vowel count or forbidden letter per puzzle.
-- **Names**: every full name is unique within a directory.
+- **Clue set**: always **12 clues like the book** – one per attribute (6) and one per name clue type (6).
+  The order is **fixed** (the book's order of subjects); the variety comes from the parameters.
+  A shuffled order and a random ratio of attribute and name clues were considered and dropped: shuffling adds
+  little, and a random ratio would need two clues on the same attribute (redundant or contradicting) or new
+  clue types beyond the book.
+- **Clue parameters** (keep it simple, not too difficult):
+  - "one of" clues allow **2 or 3 values**, never 1; "is not" excludes exactly one value.
+    Like the book, exactly one of the five non-income attributes gets an "is not" clue, the others "one of".
+  - Income: "at least ££" or "at least £££".
+  - Initials in a letter range: only **A–M** or **N–Z** (both initials).
+  - Vowel counts (first name, surname): exactly 2 or 3.
+  - Forbidden letter: one of B, H, K, P, W.
+- **Letters**: vowels are a, e, i, o, u; **y is a consonant** – for the vowel clues and the tie-break.
+  Names contain only the letters A–Z (no hyphens or apostrophes); the "Mr" prefix is not part of the name.
+- **Names**: catalog of **120 first names × 120 surnames** (14,400 combinations). A full name may appear more than
+  once in a directory, but no two suitors are completely identical (name + all attributes).
 - **Directory order**: unsorted, like the book. Sorting/filtering belongs to the postponed player aids.
-- **Size and difficulty** are configurable when creating a new game (number of suitors, number of clues).
+- **Directory sections**: the directory is split into numbered sections of 100 suitors for navigation and
+  progress (the book has 34 sections) – derived from the position, not stored.
+- **Size and difficulty** are configurable when creating a new game: number of suitors (**100–10,000**) and
+  number of finalists (1–5). The number of clues is always 12. No further difficulty settings for now
+  (e.g. the share of near misses – maybe later, probably not).
+- **Finalists in the UI**: the finalist count is shown from the start. When exactly that many suitors are left
+  and they are the correct finalists, the tie-break is revealed and the player picks Mr Right among them.
+  If they are not the correct finalists, a hint says that not all remaining suitors match the clues, the
+  tie-break stays hidden and it **counts as a wrong guess**.
 - **Solving**: the player marks a candidate as Mr Right and confirms it in a dialog.
   A wrong answer is reported and counted. There is no "losing" – the game continues.
+- **Cheating is accepted**: the solution check runs offline on hashes of the finalist and Mr Right ids
+  (see architecture). With at most 10,000 suitors these hashes can be brute-forced. That is fine –
+  it's a single-player game with nothing to win; whoever cheats only spoils their own puzzle.
 
 ### Puzzles & sharing
 - Every player can create puzzles; they are persisted on the server.
@@ -167,7 +188,12 @@ Vowels are **a, e, i, o, u – not y** (footnote in the book).
 - Storage: **file-based JSON**, no database (like `avalons_final_stand`).
 - Auth: **email login with a dev/test mode**, reused from `avalons_final_stand`. An account is required.
 - Seeds: only the seed (plus size/difficulty config) is stored; the puzzle is regenerated from it.
-  The generator will rarely change, so seed stability is accepted as a risk.
+  The generator will rarely change, so seed stability is accepted as a risk. Each game also stores the
+  **`generatorVersion`** it was created with, so a breaking generator change can be detected. Kept simple:
+  breaking changes are rare, outdated games are marked as such and can only be deleted – no migration.
+- Login: JWT lifetime **30 days**, so offline sessions and device switches don't keep forcing a new login.
+- Generation: **constructive** – clues and finalists first, then near misses and random suitors around them
+  (details in architecture.md).
 - Architecture: keep it simple – generator, game logic, REST API, storage. No hexagonal layering;
   a minimal ArchUnit test with two rules: no package cycles, `puzzle` stays free of Quarkus/REST.
 - Testing: JUnit5 + RestAssured (backend), a few Playwright e2e tests including a mobile viewport.

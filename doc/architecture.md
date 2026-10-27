@@ -3,8 +3,6 @@
 Browser-based elimination logic puzzle inspired by *Emma's Perfect Match*.
 Background and all product decisions: [puzzle-analysis.md](puzzle-analysis.md).
 
-Items marked *(assumption)* are proposals that still need confirmation.
-
 ## Overview
 
 ```mermaid
@@ -70,25 +68,42 @@ Dependencies: `quarkus-rest-jackson`, `quarkus-kotlin`, `quarkus-arc`, `quarkus-
 
 ### Puzzle Model
 
-The real attribute list from the book is still unknown, so the model is built to be extended.
+The book's six attributes, each suitor has exactly one value per attribute (see
+[puzzle-analysis.md](puzzle-analysis.md#attributes-legend)):
 
 ```kotlin
+enum class Income { AT_LEAST_1K, AT_LEAST_2K, AT_LEAST_4K, AT_LEAST_10K }   // £ .. ££££, ordinal
+enum class Element { AIR, FIRE, WATER, EARTH }
+enum class EyeColor { BROWN, BROWN_GREEN, AMBER, GREEN, BLUE }
+enum class HairColor { BLOND, BROWN, BLACK, AUBURN }
+enum class Temperament { BROODING, CHARMING, RESERVED, AMIABLE, DASHING }
+enum class Interest { INTELLECTUAL, MUSICAL, SPORTY, SOCIABLE }
+
 data class Suitor(
     val id: Int,                 // position in the directory, 0-based
     val firstName: String,
     val lastName: String,
+    val income: Income,
+    val element: Element,
     val eyeColor: EyeColor,
     val hairColor: HairColor,
-    val fortune: Int,            // 1..4 (£ .. ££££)
-    val zodiac: ZodiacSign,      // element derived from the sign
+    val temperament: Temperament,
+    val interest: Interest,
 )
 
-data class PuzzleConfig(val suitorCount: Int, val clueCount: Int)
+data class PuzzleConfig(val suitorCount: Int, val finalistCount: Int)   // 100..10,000 and 1..5
 
-data class Puzzle(val config: PuzzleConfig, val suitors: List<Suitor>, val clues: List<Clue>, val solutionId: Int)
+data class Puzzle(
+    val config: PuzzleConfig,
+    val suitors: List<Suitor>,
+    val clues: List<Clue>,         // always 12, in the book's order
+    val finalistIds: Set<Int>,     // suitors matching all clues
+    val solutionId: Int,           // Mr Right: the finalist with the fewest consonants
+)
 ```
 
-Name-derived properties (vowel count, initial, name length) are computed, not stored.
+Name-derived properties (initials, vowel and consonant counts) are computed, not stored.
+Vowels are a, e, i, o, u; y is a consonant. Names contain only the letters A–Z.
 
 **Clues** are a sealed hierarchy. Each clue is a predicate on a suitor and is language-neutral –
 the backend sends a type plus parameters, the frontend renders the text via i18n:
@@ -97,38 +112,82 @@ the backend sends a type plus parameters, the frontend renders the text via i18n
 sealed interface Clue {
     fun matches(suitor: Suitor): Boolean
 }
-data class EyeColorIs(val color: EyeColor) : Clue
-data class EyeColorIsNot(val color: EyeColor) : Clue
-data class FortuneAtLeast(val level: Int) : Clue
-data class FirstNameVowelCount(val count: Int) : Clue
-data class ZodiacElementIs(val element: ZodiacElement) : Clue
-// … more once the book's clue types are known
+
+// attribute clues
+data class IncomeAtLeast(val level: Income) : Clue                               // AT_LEAST_2K or AT_LEAST_4K
+data class AttributeIsNot(val attribute: Attribute, val value: String) : Clue    // exactly one value
+data class AttributeIsOneOf(val attribute: Attribute, val values: Set<String>) : Clue   // 2 or 3 values
+
+// name clues
+data object InitialsDiffer : Clue                                       // first name and surname initial differ
+data class InitialsInRange(val range: LetterRange) : Clue               // both initials in A_TO_M or N_TO_Z
+data object SurnameStartAndEndDiffer : Clue
+data class FirstNameVowelCount(val count: Int) : Clue                   // exactly 2 or 3
+data class SurnameVowelCount(val count: Int) : Clue                     // exactly 2 or 3
+data class NameExcludesLetter(val letter: Char) : Clue                  // one of B, H, K, P, W
+
+enum class Attribute { ELEMENT, EYE_COLOR, HAIR_COLOR, TEMPERAMENT, INTEREST }
 ```
 
-JSON example: `{ "type": "FORTUNE_AT_LEAST", "level": 3 }` → en: "He has a fortune of at least £££."
+`value`/`values` hold the enum constant names of the given attribute (e.g. `"BLOND"`); the implementation may
+use typed values internally as long as the JSON stays the same.
+
+JSON examples:
+- `{ "type": "INCOME_AT_LEAST", "level": "AT_LEAST_4K" }` → en: "He earns at least £££ a year."
+- `{ "type": "ATTRIBUTE_IS_ONE_OF", "attribute": "EYE_COLOR", "values": ["GREEN", "BLUE"] }`
+- `{ "type": "NAME_EXCLUDES_LETTER", "letter": "H" }`
+
+**Clue set** – always the book's 12 clues, one per "subject":
+
+| Subject                              | Clue                                                   |
+|--------------------------------------|--------------------------------------------------------|
+| Income                               | `IncomeAtLeast`                                        |
+| Element, eyes, hair, temperament, interest | one random attribute gets `AttributeIsNot`, the other four `AttributeIsOneOf` |
+| Name (6)                             | each name clue type exactly once                       |
+
+The order is fixed and follows the book's order of subjects, so attribute and name clues are mixed:
+hair, income, initials differ, temperament, initials in range, interest, element, surname start/end,
+first name vowels, eyes, excluded letter, surname vowels.
+
+**Name catalog**: 120 first names × 120 surnames, a fixed list in the `puzzle` package. The order of the
+lists is part of the generator (changing it changes all puzzles → new `generatorVersion`).
 
 ### Puzzle Generation
 
-Deterministic: same seed + same config → same puzzle.
+Deterministic: same seed + same config + same generator version → same puzzle.
 
 - **Seed**: a free-text string (entered by the player or random). It is hashed (SHA-256, first 8 bytes)
   into a `Long` for `kotlin.random.Random`. Words like `"emma"` work as seeds.
-- **Config**: `suitorCount` (e.g. 100–6,400) and `clueCount` (e.g. 3–12), validated against limits.
-- Only seed and config are stored; the puzzle is regenerated on demand and kept in an in-memory
-  cache (`quarkus-cache`, keyed by seed + config).
+- **Config**: `suitorCount` (100–10,000) and `finalistCount` (1–5), validated against these limits.
+  The clue count is fixed (12).
+- **`GENERATOR_VERSION`**: a constant in the generator, stored with every game. It is increased whenever
+  a change would produce a different puzzle for the same seed. No migration and no old generator versions
+  are kept: a game with an outdated version is marked as outdated in the game list and can only be deleted.
+- Only seed, config and generator version are stored; the puzzle is regenerated on demand and kept in an
+  in-memory cache (`quarkus-cache`, keyed by seed + config).
 
-**Algorithm** – build the solution instead of searching for one *(assumption)*:
+**Algorithm** – constructive: decide the clues and the finalists first, then build everybody else around them,
+so a valid puzzle comes out in a single pass (no searching for a random directory that happens to work):
 
-1. Generate the suitors with random names and attributes; pick the target.
-2. Pick `clueCount` clues that are true for the target. Their combined pass rates should be about
-   `1 / suitorCount`, so each clue removes a satisfying chunk of the directory.
-3. **Uniqueness**: every other suitor matching all clues gets one attribute changed so that it fails
-   exactly one random clue.
-4. **Every clue counts**: for each clue, make sure at least one suitor fails *only* that clue
-   (plant one if missing). Then dropping any clue leaves more than one candidate.
-5. Verify (unique + minimal); on failure retry with the next value from the same random sequence.
+1. **Clues**: pick the 12 clues with random parameters (see clue set above).
+2. **Name groups**: evaluate the 6 name clues on all 14,400 catalog combinations and group them by the set of
+   name clues they fail. Needed: a group failing *no* name clue (for finalists) and, per name clue, a group
+   failing *only* that clue (for near misses). If one is empty or the finalists' tie-break below is impossible,
+   re-roll the name clue parameters (step 1).
+3. **Finalists**: create `finalistCount` suitors that match all clues – attributes drawn from the allowed values,
+   names from the "fails nothing" group. Mr Right gets the name with the fewest consonants; the other finalists
+   get names with strictly more consonants, so the tie-break is unique.
+4. **Near misses** ("every clue counts"): for every clue create at least one suitor that fails *only* that clue
+   (one disallowed attribute value, or a name from that clue's group). Dropping any clue therefore leaves more than
+   `finalistCount` candidates.
+5. **Everybody else**: random name from the whole catalog + random attributes. Re-roll a suitor if it matches all
+   clues or is identical (name + all attributes) to an existing suitor.
+6. **Shuffle** all suitors and assign the ids (= directory position).
+7. **Verify** (exactly the finalists match all clues, unique tie-break, every clue needed) – a failed check is a
+   bug, not a retry case; tests cover it.
 
-This guarantees a valid puzzle in a single pass for every config, unlike random search.
+Because the clues are strong (roughly 1–3 % of random suitors pass all 12, see puzzle-analysis), step 5 rarely
+re-rolls. In small directories most eliminations come from the planted near misses.
 
 ### Game Model
 
@@ -138,14 +197,16 @@ data class Game(
     val ownerId: UserId,
     val seed: String,
     val config: PuzzleConfig,
+    val generatorVersion: Int,     // GENERATOR_VERSION at creation time
     val createdAt: Instant,
     val state: GameState,
 )
 
 data class GameState(
     val crossedOut: Set<Int>,      // suitor ids
-    val solved: Boolean,
-    val wrongGuesses: Int,
+    val finalistsFound: Boolean,   // the remaining suitors are exactly the finalists → tie-break revealed
+    val solved: Boolean,           // Mr Right picked correctly
+    val wrongGuesses: Int,         // wrong finalist sets + wrong Mr Right picks
     val version: Long,             // incremented by the server on every save
     val updatedAt: Instant,        // client time of the last change, shown in conflict dialogs
 )
@@ -174,7 +235,7 @@ Reused from `avalons_final_stand`:
 - Email + password (bcrypt), email verification, password reset via mailer.
 - JWT (HS256) as bearer token. Dev/test mode with email disabled.
 - An account is required to play.
-- Token lifetime: **30 days** instead of 24 h *(assumption)*, so offline sessions and device switches
+- Token lifetime: **30 days** instead of 24 h, so offline sessions and device switches
   don't keep forcing a new login.
 
 ## REST API
@@ -185,17 +246,22 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 |--------|----------------------------|----------------------------------------------------------|
 | POST   | `/auth/register`, `/auth/login`, … | Auth flows (as in the reference project)         |
 | GET    | `/games`                   | List own games with a progress summary                   |
-| POST   | `/games`                   | Create a game `{ suitorCount, clueCount, seed? }`        |
-| GET    | `/games/{id}`              | Puzzle (suitors, clues, `solutionHash`) + state          |
+| POST   | `/games`                   | Create a game `{ suitorCount, finalistCount, seed? }`    |
+| GET    | `/games/{id}`              | Puzzle (suitors, clues, `finalistCount`, hashes) + state |
 | PUT    | `/games/{id}/state`        | Save state `{ baseVersion, state }` → new version or 409 |
 | DELETE | `/games/{id}`              | Delete a game                                            |
 | GET    | `/info`, `/health`         | Version info, health check                               |
 
-- **Payload size**: a 6,400-suitor puzzle is a few hundred KB of JSON; HTTP compression
-  (`quarkus.http.enable-compression`) brings it well below 100 KB. Optimize the format only if needed.
-- **Solution check**: the puzzle contains `solutionHash = SHA-256(gameId + solutionId)` instead of the
-  solution id, so a guess can be checked **offline** without revealing the answer in the payload.
-  The server re-checks `solved` against the real solution when the state is saved.
+- **Payload size**: a 10,000-suitor puzzle is well below 1 MB of JSON; HTTP compression
+  (`quarkus.http.enable-compression`) shrinks it a lot. Optimize the format only if needed.
+- **Solution check**: the puzzle contains two hashes instead of the ids, so both steps can be checked
+  **offline** without showing the answer in the payload:
+  - `finalistsHash = SHA-256(gameId + ":" + sorted finalist ids joined by ",")` – checked when exactly
+    `finalistCount` suitors are left; on a match the tie-break is revealed. A mismatch shows a hint that not
+    all remaining suitors match the clues and counts as a wrong guess.
+  - `solutionHash = SHA-256(gameId + ":" + solutionId)` – checked when the player picks Mr Right.
+  - Both can be brute-forced; that's accepted (see puzzle-analysis, "Cheating is accepted").
+  - The server re-checks `finalistsFound` and `solved` against the real puzzle when the state is saved.
 
 ## Frontend
 
@@ -216,11 +282,14 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 
 - **Login / Register / Verify / Reset**
 - **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button
-- **New game**: suitor count, clue count, optional seed
+- **New game**: suitor count, finalist count, optional seed
 - **Game view**:
-  - Directory: virtualized list with section headers; tap a row to cross out / restore
-  - Clue panel: bottom sheet on mobile, side panel on wide screens
-  - "This is Mr Right" action on a row → confirmation dialog → result (wrong guesses are counted, no losing)
+  - Directory: virtualized list, split into numbered sections of 100 suitors (section = `id / 100`);
+    tap a row to cross out / restore
+  - Clue panel (12 clues + "N finalists"): bottom sheet on mobile, side panel on wide screens
+  - When exactly `finalistCount` suitors are left and `finalistsHash` matches: reveal the tie-break
+    (fewest consonants in the full name, y counts as a consonant)
+  - "This is Mr Right" action on a finalist → confirmation dialog → result (wrong guesses are counted, no losing)
   - Offline indicator: note icon with "changes are only stored on this device"
 - **Settings**: language
 
@@ -290,7 +359,8 @@ The `Game` model can get a `sharedWith: List<UserId>` field without changing the
 
 ## Testing
 
-- **Backend**: JUnit5 – generator properties (deterministic, unique solution, every clue needed) and
+- **Backend**: JUnit5 – generator properties (deterministic, exactly the finalists match, unique tie-break,
+  every clue needed, across many seeds and configs) and
   game service; RestAssured for the REST API (`@QuarkusTest`, test data dir under `build/`).
 - **Architecture** (ArchUnit, `ArchitectureTest`): only two rules – no dependency cycles between packages,
   and `puzzle` must not depend on Quarkus/Jakarta/Vert.x.
@@ -299,8 +369,4 @@ The `Game` model can get a `sharedWith: List<UserId>` field without changing the
 
 ## Open Points
 
-- Attributes, clue types and the finalist/tie-break ending are decided in `puzzle-analysis.md`; the puzzle
-  model above (`Suitor`, `Clue`, `PuzzleConfig` with a `finalistCount`) and the generation algorithm still
-  have to be updated to match.
-- Player aids, look & feel, name lists, sharing details (postponed).
-- Confirm assumptions: constructive generation, offline solution check via hash, 30-day token lifetime.
+- Player aids, look & feel, name lists, clue flavour texts, sharing details (postponed).
