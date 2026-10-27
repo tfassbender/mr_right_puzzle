@@ -8,11 +8,12 @@ Mobile first, German + English, playable offline.
 
 - `doc/puzzle-analysis.md` – how the book's puzzle works and **all product decisions** (read first)
 - `doc/architecture.md` – packages, data model, REST API, saving/sync, offline, sharing
+- `doc/implementation_plan.md` – phased roadmap with checkboxes (tick items when done)
 - `README.md` – status and dev commands
 
 **Status:** project setup with login is done. The puzzle rules are decided in `doc/puzzle-analysis.md`,
 the puzzle model and generation algorithm are specified in `doc/architecture.md`. Next step: implement the
-puzzle model and generator (needs the 120 × 120 name catalog).
+puzzle model and generator – Phase 1 of `doc/implementation_plan.md`.
 
 ## Build, run & test
 

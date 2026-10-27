@@ -7,6 +7,7 @@ among hundreds of bachelors by crossing out everyone who doesn't match the clues
 
 - ✅ Puzzle analysis and decisions – [`doc/puzzle-analysis.md`](doc/puzzle-analysis.md)
 - ✅ Architecture – [`doc/architecture.md`](doc/architecture.md)
+- 📋 Implementation plan – [`doc/implementation_plan.md`](doc/implementation_plan.md)
 - ✅ Project setup: Gradle monorepo, Quarkus backend with login, Preact frontend with i18n (en/de) and PWA
 - ✅ Puzzle rules analysed and decided (`doc/puzzle-analysis.md`)
 - ⬜ Generator, game view, sync
