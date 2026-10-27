@@ -16,14 +16,14 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 - [x] Playwright e2e setup (desktop + mobile)
 - [x] Puzzle rules and architecture documented
 
-## Phase 1 – Puzzle model
+## Phase 1 – Puzzle model ✅
 
 **Exit criteria:** all attributes, clues and name rules exist as plain Kotlin and are unit-tested.
 
-- [ ] Attribute enums and `Suitor`
-- [ ] Name helpers: initials, vowel and consonant counts (y is a consonant)
-- [ ] All clue types (9 types → 12 clues per puzzle) with `matches()`, plus their JSON form
-- [ ] Name catalog: 120 first names + 120 surnames (A–Z only)
+- [x] Attribute enums and `Suitor`
+- [x] Name helpers: initials, vowel and consonant counts (y is a consonant)
+- [x] All clue types (9 types → 12 clues per puzzle) with `matches()`, plus their JSON form
+- [x] Name catalog: 120 first names + 120 surnames (A–Z only)
 
 ## Phase 2 – Generator
 

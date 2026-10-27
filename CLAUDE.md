@@ -11,9 +11,8 @@ Mobile first, German + English, playable offline.
 - `doc/implementation_plan.md` – phased roadmap with checkboxes (tick items when done)
 - `README.md` – status and dev commands
 
-**Status:** project setup with login is done. The puzzle rules are decided in `doc/puzzle-analysis.md`,
-the puzzle model and generation algorithm are specified in `doc/architecture.md`. Next step: implement the
-puzzle model and generator – Phase 1 of `doc/implementation_plan.md`.
+**Status:** project setup with login and the puzzle model (package `puzzle`) are done. Next step: the
+generator – Phase 2 of `doc/implementation_plan.md` (algorithm in `doc/architecture.md`).
 
 ## Build, run & test
 

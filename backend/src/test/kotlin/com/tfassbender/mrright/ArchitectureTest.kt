@@ -29,8 +29,6 @@ class ArchitectureTest {
         noClasses().that().resideInAPackage("..puzzle..")
             .should().dependOnClassesThat().resideInAnyPackage("io.quarkus..", "jakarta..", "io.vertx..")
             .because("the generator must stay fast to unit-test and deterministic")
-            // The puzzle package doesn't exist yet; the rule applies as soon as it does.
-            .allowEmptyShould(true)
             .check(productionClasses)
     }
 }
