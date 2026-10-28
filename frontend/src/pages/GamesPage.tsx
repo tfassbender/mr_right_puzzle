@@ -1,8 +1,44 @@
 import { useEffect, useState } from 'preact/hooks';
+import { ApiError } from '../api/client';
 import { deleteGame, listGames, type GameSummary } from '../api/gamesApi';
 import { session } from '../auth/session';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { errorText, m } from '../i18n/i18n';
+import { deleteStoredGame, loadLocalState, loadStoredGameList, storeGameList } from '../storage/gameStorage';
+
+/**
+ * Shows this device's progress where the server may not have it yet: unsaved (dirty) local states,
+ * and – when offline, from the stored list – every local state.
+ */
+async function withLocalProgress(games: GameSummary[], offline: boolean): Promise<GameSummary[]> {
+  return Promise.all(
+    games.map(async (game) => {
+      const local = await loadLocalState(game.id);
+      if (!local || (!local.dirty && !offline)) return game;
+      const { state } = local;
+      return {
+        ...game,
+        crossedOutCount: state.crossedOut.size,
+        finalistsFound: state.finalistsFound,
+        solved: state.mrRightId !== null,
+        wrongGuesses: state.wrongGuesses,
+      };
+    }),
+  );
+}
+
+/** The game list from the server, or the last stored one when offline (then `offline` is true). */
+async function fetchGames(): Promise<{ games: GameSummary[]; offline: boolean }> {
+  try {
+    const games = await listGames();
+    await storeGameList(games);
+    return { games: await withLocalProgress(games, false), offline: false };
+  } catch (e) {
+    const stored = e instanceof ApiError && e.code === 'NETWORK' ? await loadStoredGameList() : undefined;
+    if (!stored) throw e;
+    return { games: await withLocalProgress(stored, true), offline: true };
+  }
+}
 
 /** The player's puzzles, newest first, with their progress. */
 export function GamesPage() {
@@ -10,9 +46,16 @@ export function GamesPage() {
   const [games, setGames] = useState<GameSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<GameSummary | null>(null);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
-    listGames().then(setGames, (e) => setError(errorText(e)));
+    fetchGames().then(
+      (result) => {
+        setGames(result.games);
+        setOffline(result.offline);
+      },
+      (e) => setError(errorText(e)),
+    );
   }, []);
 
   if (!user) return null;
@@ -22,6 +65,7 @@ export function GamesPage() {
     setToDelete(null);
     try {
       await deleteGame(game.id);
+      await deleteStoredGame(game.id);
       setGames((current) => current?.filter((g) => g.id !== game.id) ?? null);
     } catch (e) {
       setError(errorText(e));
@@ -37,6 +81,11 @@ export function GamesPage() {
         </a>
       </div>
       <p class="muted">{m.games_welcome({ name: user.displayName })}</p>
+      {offline && (
+        <p class="sync-note offline" role="status">
+          <span aria-hidden="true">📝</span> {m.games_offline()}
+        </p>
+      )}
       {error && (
         <p class="error" role="alert">
           {error}

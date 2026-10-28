@@ -325,6 +325,21 @@ src/
 - On opening a game or returning to the tab, the client fetches the server state to pick up changes
   from another device.
 
+### Local Storage (IndexedDB)
+
+Keys are namespaced by user id (`<userId>:…`), so accounts on a shared device stay apart:
+
+| Key                  | Content                                                            |
+|----------------------|--------------------------------------------------------------------|
+| `<userId>:game:<id>` | The puzzle (`GameDto`), stored once when the game is first opened  |
+| `<userId>:state:<id>`| `{ state, baseVersion, dirty }` – written on every change          |
+| `<userId>:list`      | The last game list from the server, shown when offline             |
+
+A game opens from IndexedDB if it's there (works offline) and then refreshes from `GET /games/{id}/state`.
+The game list shows a game's local progress when it is `dirty` (not saved yet) or when offline.
+The SyncManager's status is `synced`, `pending`, `offline` (network error, retried every 30 s and on `online`)
+or `error` (rejected by the server, e.g. deleted – not retried).
+
 ### Conflict Detection
 
 Optimistic locking with the server-side `version`:

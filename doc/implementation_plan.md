@@ -72,15 +72,18 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 Placeholder icons are emoji and coloured shapes. The e2e module depends on `:backend` to regenerate the puzzle
 from its seed and know the solution. A minimal debounced server save is in place; Phase 6 completes it.
 
-## Phase 6 – Saving, sync & offline
+## Phase 6 – Saving, sync & offline ✅
 
 **Exit criteria:** progress survives device switches and offline play.
 
-- [ ] IndexedDB storage of puzzle + state, immediate local save
-- [ ] SyncManager: debounced server save, flush on tab hide, refresh on open/return
-- [ ] Offline indicator, retry when the connection is back
-- [ ] Conflict dialog (both versions with a summary)
-- [ ] Vitest tests for sync and conflict logic
+- [x] IndexedDB storage of puzzle + state, immediate local save
+- [x] SyncManager: debounced server save, flush on tab hide, refresh on open/return
+- [x] Offline indicator, retry when the connection is back
+- [x] Conflict dialog (both versions with a summary)
+- [x] Vitest tests for sync and conflict logic
+
+**Status:** e2e tests cover offline saving (`setOffline`) and the conflict dialog with two browser contexts.
+The game list shows unsaved local progress and falls back to the stored list when offline.
 
 ## Phase 7 – Polish & release
 

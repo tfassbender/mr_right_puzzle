@@ -147,5 +147,18 @@
   "clue_SURNAME_START_AND_END_DIFFER": "His surname does not start and end with the same letter.",
   "clue_FIRST_NAME_VOWEL_COUNT": "His first name has exactly {count} vowels.",
   "clue_SURNAME_VOWEL_COUNT": "His surname has exactly {count} vowels.",
-  "clue_NAME_EXCLUDES_LETTER": "His full name does not contain the letter {letter}."
+  "clue_NAME_EXCLUDES_LETTER": "His full name does not contain the letter {letter}.",
+  "sync_offline": "Offline – changes are only stored on this device for now.",
+  "sync_error": "The progress could not be saved on the server.",
+  "games_offline": "Offline – showing the puzzles stored on this device.",
+  "conflict_title": "Which version do you want to keep?",
+  "conflict_text": "This puzzle was also played on another device. Choose which progress to continue with – the other one is discarded.",
+  "conflict_this_device": "This device",
+  "conflict_other_device": "Other device",
+  "conflict_crossed_out": "{count} crossed out",
+  "conflict_solved": "Mr Right found",
+  "conflict_not_solved": "Not solved yet",
+  "conflict_changed": "Last change: {time}",
+  "conflict_keep_local": "Keep this device's",
+  "conflict_take_server": "Take the other one"
 }

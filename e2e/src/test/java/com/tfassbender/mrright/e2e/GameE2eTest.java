@@ -32,7 +32,7 @@ class GameE2eTest extends E2eBase {
         String seed = "e2e-" + UUID.randomUUID();
         Puzzle puzzle = PuzzleGenerator.INSTANCE.generate(seed, new PuzzleConfig(SUITORS, FINALISTS));
 
-        createGame(page, seed);
+        createGame(page, seed, SUITORS, FINALISTS);
         assertThat(page.getByTestId("remaining")).hasText("100 of 100 left");
 
         List<Integer> nonFinalists = puzzle.getSuitors().stream()
@@ -56,37 +56,6 @@ class GameE2eTest extends E2eBase {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("My puzzles").setExact(true)).first().click();
         assertThat(page.getByTestId("game-item")).containsText("Solved – Mr Right found!");
         assertThat(page.getByTestId("game-item")).containsText("wrong guesses: 1");
-    }
-
-    private void registerAndLogIn(Page page) {
-        String name = uniqueName();
-        page.navigate(BASE_URL + "/register");
-        page.getByLabel("Email").fill(name + "@example.com");
-        page.getByLabel("Display name").fill(name);
-        page.getByLabel("Password").fill(PASSWORD);
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create account")).click();
-        assertThat(page.getByText("Welcome, " + name + "!")).isVisible();
-    }
-
-    private void createGame(Page page, String seed) {
-        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("New puzzle")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("100").setExact(true)).click();
-        page.getByLabel("Finalists").selectOption(String.valueOf(FINALISTS));
-        page.getByLabel("Seed (optional)").fill(seed);
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create puzzle")).click();
-    }
-
-    /** The directory is virtualized: scroll the row into the rendered window first, then tap it. */
-    private void crossOut(Page page, int id) {
-        page.evaluate("""
-                id => {
-                  const scroll = document.querySelector('.directory-scroll');
-                  const itemHeight = Number(scroll.dataset.itemHeight);
-                  const index = id + Math.floor(id / 100) + 1; // every section of 100 starts with a header
-                  scroll.scrollTop = index * itemHeight - scroll.clientHeight / 2;
-                }""", id);
-        page.locator("[data-suitor-id='" + id + "']").click();
-        assertThat(page.locator("[data-suitor-id='" + id + "']")).hasAttribute("aria-pressed", "true");
     }
 
     private void pick(Page page, Suitor suitor) {

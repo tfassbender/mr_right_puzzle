@@ -615,3 +615,40 @@ select {
     display: none;
   }
 }
+
+/* --- Sync ----------------------------------------------------------------------------------------- */
+
+.sync-note {
+  margin: 8px 12px 0;
+  padding: 6px 12px;
+  background: #fff4d6;
+  color: #6b4e00;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.stack > .sync-note {
+  margin: 0;
+}
+
+.sync-note.error {
+  background: #fdecea;
+  color: var(--color-error);
+}
+
+.conflict-versions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.conflict-version h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.conflict-version ul {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 0.9rem;
+}

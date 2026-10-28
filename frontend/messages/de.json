@@ -147,5 +147,18 @@
   "clue_SURNAME_START_AND_END_DIFFER": "Sein Nachname beginnt und endet nicht mit demselben Buchstaben.",
   "clue_FIRST_NAME_VOWEL_COUNT": "Sein Vorname hat genau {count} Vokale.",
   "clue_SURNAME_VOWEL_COUNT": "Sein Nachname hat genau {count} Vokale.",
-  "clue_NAME_EXCLUDES_LETTER": "Sein vollständiger Name enthält kein {letter}."
+  "clue_NAME_EXCLUDES_LETTER": "Sein vollständiger Name enthält kein {letter}.",
+  "sync_offline": "Offline – Änderungen werden vorerst nur auf diesem Gerät gespeichert.",
+  "sync_error": "Der Fortschritt konnte nicht auf dem Server gespeichert werden.",
+  "games_offline": "Offline – es werden die auf diesem Gerät gespeicherten Rätsel angezeigt.",
+  "conflict_title": "Welchen Stand möchtest du behalten?",
+  "conflict_text": "Dieses Rätsel wurde auch auf einem anderen Gerät gespielt. Wähle, mit welchem Fortschritt du weiterspielst – der andere wird verworfen.",
+  "conflict_this_device": "Dieses Gerät",
+  "conflict_other_device": "Anderes Gerät",
+  "conflict_crossed_out": "{count} gestrichen",
+  "conflict_solved": "Mr Right gefunden",
+  "conflict_not_solved": "Noch nicht gelöst",
+  "conflict_changed": "Letzte Änderung: {time}",
+  "conflict_keep_local": "Diesen behalten",
+  "conflict_take_server": "Den anderen nehmen"
 }

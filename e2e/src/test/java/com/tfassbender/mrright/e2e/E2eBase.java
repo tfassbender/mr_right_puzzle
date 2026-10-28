@@ -5,6 +5,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.BeforeAll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 /**
  * Shared setup of the browser tests: one Chromium per test class and a fresh browser context per page.
@@ -75,5 +78,47 @@ abstract class E2eBase {
     /** A display name that is unique per test run and valid (4–15 chars). */
     static String uniqueName() {
         return "e2e" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
+
+    /** Registers a new account (the dev backend logs in directly) and returns its display name. */
+    static String registerAndLogIn(Page page) {
+        String name = uniqueName();
+        page.navigate(BASE_URL + "/register");
+        page.getByLabel("Email").fill(name + "@example.com");
+        page.getByLabel("Display name").fill(name);
+        page.getByLabel("Password").fill(PASSWORD);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create account")).click();
+        assertThat(page.getByText("Welcome, " + name + "!")).isVisible();
+        return name;
+    }
+
+    static void logIn(Page page, String name) {
+        page.navigate(BASE_URL + "/login");
+        page.getByLabel("Email").fill(name + "@example.com");
+        page.getByLabel("Password").fill(PASSWORD);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
+        assertThat(page.getByText("Welcome, " + name + "!")).isVisible();
+    }
+
+    static void createGame(Page page, String seed, int suitors, int finalists) {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("New puzzle")).click();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(String.valueOf(suitors)).setExact(true)).click();
+        page.getByLabel("Finalists").selectOption(String.valueOf(finalists));
+        page.getByLabel("Seed (optional)").fill(seed);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create puzzle")).click();
+        assertThat(page.getByTestId("remaining")).isVisible();
+    }
+
+    /** The directory is virtualized: scroll the row into the rendered window first, then tap it. */
+    static void crossOut(Page page, int id) {
+        page.evaluate("""
+                id => {
+                  const scroll = document.querySelector('.directory-scroll');
+                  const itemHeight = Number(scroll.dataset.itemHeight);
+                  const index = id + Math.floor(id / 100) + 1; // every section of 100 starts with a header
+                  scroll.scrollTop = index * itemHeight - scroll.clientHeight / 2;
+                }""", id);
+        page.locator("[data-suitor-id='" + id + "']").click();
+        assertThat(page.locator("[data-suitor-id='" + id + "']")).hasAttribute("aria-pressed", "true");
     }
 }

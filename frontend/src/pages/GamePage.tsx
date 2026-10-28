@@ -1,51 +1,73 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useRoute } from 'preact-iso';
-import { loadGame } from '../api/gamesApi';
 import { CluePanel } from '../components/CluePanel';
+import { ConflictDialog } from '../components/ConflictDialog';
 import { Directory } from '../components/Directory';
 import { FinalistsPanel } from '../components/FinalistsPanel';
-import { GameStore } from '../game/gameStore';
-import { fromDto } from '../game/playState';
 import { errorText, formatNumber, m } from '../i18n/i18n';
-import { SyncManager } from '../sync/syncManager';
+import { openGameSession, type GameSession } from '../sync/gameSession';
 
-export function GamePage() {
-  const { params } = useRoute();
-  const [store, setStore] = useState<GameStore | null>(null);
+/** Opens the game and keeps it in sync: refresh on tab return and reconnect, save when the tab is hidden. */
+function useGameSession(gameId: string) {
+  const [session, setSession] = useState<GameSession | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let sync: SyncManager | null = null;
-    const flush = () => {
-      if (document.visibilityState === 'hidden') sync?.flush();
+    let current: GameSession | null = null;
+    let closed = false;
+    openGameSession(gameId).then(
+      (opened) => {
+        if (closed) return opened.sync.dispose();
+        current = opened;
+        setSession(opened);
+        opened.sync.refresh();
+      },
+      (e) => setError(errorText(e)),
+    );
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') current?.sync.flush(true);
+      else current?.sync.refresh();
     };
-    loadGame(params.id).then((game) => {
-      sync = new SyncManager(game.id, game.state.version);
-      setStore(new GameStore(game, fromDto(game.state), (state) => sync!.changed(state)));
-    }, (e) => setError(errorText(e)));
-    document.addEventListener('visibilitychange', flush);
+    const onOnline = () => current?.sync.refresh();
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('online', onOnline);
     return () => {
-      document.removeEventListener('visibilitychange', flush);
-      sync?.flush();
+      closed = true;
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('online', onOnline);
+      current?.sync.flush();
+      current?.sync.dispose();
     };
-  }, [params.id]);
+  }, [gameId]);
+
+  return { session, error };
+}
+
+export function GamePage() {
+  const { params } = useRoute();
+  const { session, error } = useGameSession(params.id);
 
   if (error) {
     return (
       <div class="card">
-        <p class="error" role="alert">{error}</p>
+        <p class="error" role="alert">
+          {error}
+        </p>
         <a href="/">{m.game_back()}</a>
       </div>
     );
   }
-  if (!store) return <p class="muted">{m.game_loading()}</p>;
-  return <GameView store={store} />;
+  if (!session) return <p class="muted">{m.game_loading()}</p>;
+  return <GameView session={session} />;
 }
 
-function GameView({ store }: { store: GameStore }) {
+function GameView({ session: { store, sync } }: { session: GameSession }) {
   const [cluesOpen, setCluesOpen] = useState(false);
   const state = store.state.value;
   const hint = store.hint.value;
+  const status = sync.status.value;
+  const conflict = sync.conflict.value;
 
   return (
     <div class="game-page">
@@ -67,6 +89,11 @@ function GameView({ store }: { store: GameStore }) {
             {m.game_clues()}
           </button>
         </div>
+        {(status === 'offline' || status === 'error') && (
+          <p class={`sync-note ${status}`} role="status" data-testid="sync-note">
+            <span aria-hidden="true">📝</span> {status === 'offline' ? m.sync_offline() : m.sync_error()}
+          </p>
+        )}
         {hint && (
           <p class="hint" role="alert">
             {m[`game_hint_${hint}`]()}
@@ -76,6 +103,7 @@ function GameView({ store }: { store: GameStore }) {
         <Directory store={store} />
       </div>
       <CluePanel game={store.game} open={cluesOpen} onClose={() => setCluesOpen(false)} />
+      {conflict && <ConflictDialog conflict={conflict} onResolve={(choice) => sync.resolveConflict(choice)} />}
     </div>
   );
 }
