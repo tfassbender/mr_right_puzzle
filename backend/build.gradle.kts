@@ -60,3 +60,9 @@ java {
 tasks.withType<Test> {
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
 }
+
+// buildFrontend (root project) copies the SPA into src/main/resources; when both run, copy first.
+// mustRunAfter instead of dependsOn, so plain backend builds and tests don't need npm.
+tasks.named("processResources") {
+    mustRunAfter(":buildFrontend")
+}

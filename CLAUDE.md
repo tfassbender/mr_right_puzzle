@@ -11,8 +11,8 @@ Mobile first, German + English, playable offline.
 - `doc/implementation_plan.md` – phased roadmap with checkboxes (tick items when done)
 - `README.md` – status and dev commands
 
-**Status:** project setup with login and the puzzle model (package `puzzle`) are done. Next step: the
-generator – Phase 2 of `doc/implementation_plan.md` (algorithm in `doc/architecture.md`).
+**Status:** Phases 0–6 of `doc/implementation_plan.md` are done – the game is playable end to end, online and
+offline. Next: Phase 7 (look & feel, flavour texts, deployment) – its open points need the user's decisions first.
 
 ## Build, run & test
 
@@ -22,7 +22,7 @@ generator – Phase 2 of `doc/implementation_plan.md` (algorithm in `doc/archite
 | Frontend dev (port 5174) | `cd frontend && npm run dev` (proxies `/api` to 4720) |
 | Backend tests            | `./gradlew :backend:test`                       |
 | Frontend tests / types   | `cd frontend && npm test` / `npm run typecheck` |
-| E2E (both servers up)    | `./gradlew :e2e:e2eTest` (`:e2e:test` alone is skipped on purpose) |
+| E2E (both servers up)    | `./gradlew :e2e:e2eTest` (`:e2e:test` alone is skipped on purpose); filter: `./gradlew :e2e:test --tests '*GameE2eTest' :e2e:e2eTest` |
 | Production build         | `./gradlew buildFrontend :backend:quarkusBuild` |
 
 - Windows: stopping a background dev server often leaves `node`/`java` running and holding the port –
@@ -49,6 +49,8 @@ generator – Phase 2 of `doc/implementation_plan.md` (algorithm in `doc/archite
 - `ArchitectureTest` has exactly two rules: no dependency cycles between packages, and `puzzle` must not
   depend on Quarkus/Jakarta/Vert.x. `storage` is plain infrastructure and never depends on a feature package.
 - Repositories are plain classes (unit-testable against a temp dir); the feature package produces the bean.
+- Frontend: pure game logic in `src/game/` (Vitest), `src/sync/` for SyncManager + game session,
+  `src/storage/` for IndexedDB. The e2e module depends on `:backend` to regenerate a puzzle from its seed.
 - The backend sends **language-neutral data** (error codes, later clue types + parameters); all texts are
   rendered in the frontend. A backend error code `X` is shown via the message key `error_X`.
 

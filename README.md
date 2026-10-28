@@ -10,7 +10,9 @@ among hundreds of bachelors by crossing out everyone who doesn't match the clues
 - 📋 Implementation plan – [`doc/implementation_plan.md`](doc/implementation_plan.md)
 - ✅ Project setup: Gradle monorepo, Quarkus backend with login, Preact frontend with i18n (en/de) and PWA
 - ✅ Puzzle rules analysed and decided (`doc/puzzle-analysis.md`)
-- ⬜ Generator, game view, sync
+- ✅ Puzzle generator, games REST API, game list, game view (playable on phone and desktop)
+- ✅ Offline play with IndexedDB, debounced sync with conflict dialog
+- ⬜ Look & feel (Regency theme, own icons), clue flavour texts, deployment
 
 ## Tech Stack
 
