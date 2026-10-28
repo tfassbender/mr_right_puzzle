@@ -11,8 +11,9 @@ Mobile first, German + English, playable offline.
 - `doc/implementation_plan.md` – phased roadmap with checkboxes (tick items when done)
 - `README.md` – status and dev commands
 
-**Status:** Phases 0–6 and the playtest feedback round (6b) of `doc/implementation_plan.md` are done – the game
-is playable end to end, online and offline. Next: Phase 7 (look & feel, flavour texts, deployment) – its open points need the user's decisions first.
+**Status:** all phases (0–7) of `doc/implementation_plan.md` are done – the first working version is deployed at
+https://mr-right.tobias-fassbender.com. Open points (look & feel, flavour texts, own JWT key, sharing) are under
+"Later" and need the user's decisions first.
 
 ## Build, run & test
 

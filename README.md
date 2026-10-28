@@ -3,6 +3,9 @@
 A browser-based logic elimination puzzle, inspired by *Emma's Perfect Match*: find the one Mr Right
 among hundreds of bachelors by crossing out everyone who doesn't match the clues. Optimized for mobile.
 
+**🎉 First working version** – deployed at https://mr-right.tobias-fassbender.com (playable on phone and
+desktop, online and offline).
+
 ## Status
 
 - ✅ Puzzle analysis and decisions – [`doc/puzzle-analysis.md`](doc/puzzle-analysis.md)
@@ -14,7 +17,8 @@ among hundreds of bachelors by crossing out everyone who doesn't match the clues
 - ✅ Offline play with IndexedDB, debounced sync with conflict dialog
 - ✅ Playtest feedback: possible matches (star) with "Check", jump to the next open suitor, puzzle names,
   story & rules dialog
-- ⬜ Look & feel (Regency theme, own icons), clue flavour texts, deployment
+- ✅ Production build and deployment
+- ⬜ Later: look & feel (Regency theme, own icons), clue flavour texts, sharing puzzles
 
 ## Tech Stack
 

@@ -104,16 +104,23 @@ The game list shows unsaved local progress and falls back to the stored list whe
 **Status:** a correct check crosses out everybody else and stars the finalists, so the server's re-check of
 `finalistsFound` stayed unchanged. Older game files without `possibleMatches` or `name` still load.
 
-## Phase 7 – Polish & release
+## Phase 7 – Polish & release ✅
 
 **Exit criteria:** deployed on the server and nice to play.
 
-- [ ] Look & feel: Regency theme, own icons (decide first – postponed point)
 - [x] Story & rules introduction (done in Phase 6b)
-- [ ] Clue flavour texts (optional)
-- [ ] Production build and deployment
+- [x] Production build and deployment
+
+**Status:** the first working version runs at https://mr-right.tobias-fassbender.com (behind Cloudflare).
+`./gradlew :backend:quarkusBuild` builds the frontend too; the server config lives next to the JAR in
+`config/application.properties`. The look & feel and the clue flavour texts were moved to "Later".
+After a deploy, browsers keep the cached (PWA) version until the next reload.
 
 ## Later (optional)
+
+- [ ] Look & feel: Regency theme, own icons (decide first – postponed point)
+- [ ] Clue flavour texts
+- [ ] Own JWT key on the server instead of the committed dev key
 
 - [ ] Sharing a puzzle with another player (owner wins, lock while the owner plays)
 - [ ] More player aids (decide first – postponed point)
