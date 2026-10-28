@@ -206,13 +206,17 @@ data class Game(
 
 data class GameState(
     val crossedOut: Set<Int>,      // suitor ids
-    val finalistsFound: Boolean,   // the remaining suitors are exactly the finalists → tie-break revealed
-    val solved: Boolean,           // Mr Right picked correctly
+    val finalistsFound: Boolean,   // all non-finalists crossed out → tie-break revealed (stays true)
+    val mrRightId: Int?,           // the correctly picked Mr Right, null until solved (solved = mrRightId != null)
     val wrongGuesses: Int,         // wrong finalist sets + wrong Mr Right picks
     val version: Long,             // incremented by the server on every save
     val updatedAt: Instant,        // client time of the last change, shown in conflict dialogs
 )
 ```
+
+- `mrRightId` instead of a plain `solved` flag: the server can re-check it, and the UI can show who was picked.
+- Once `finalistsFound` is reached, the directory is locked (no more crossing out / restoring) – only the tie-break
+  and the pick are left. The server accepts `finalistsFound` only if every non-finalist is crossed out.
 
 Player aids (e.g. ticking off applied clues) will add fields to `GameState` later.
 
@@ -254,8 +258,11 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 | DELETE | `/games/{id}`              | Delete a game                                            |
 | GET    | `/info`, `/health`         | Version info, health check                               |
 
-- **Payload size**: a 10,000-suitor puzzle is well below 1 MB of JSON; HTTP compression
-  (`quarkus.http.enable-compression`) shrinks it a lot. Optimize the format only if needed.
+- **Payload size**: a 10,000-suitor puzzle is roughly 1.5–2 MB of JSON; HTTP compression
+  (`quarkus.http.enable-compression`) shrinks it to a small fraction. Optimize the format only if needed.
+- **Error codes** (besides auth): `INVALID_GAME_CONFIG`, `INVALID_SEED`, `INVALID_GAME_STATE` (400),
+  `GAME_NOT_FOUND` (404, also for other players' games), `GAME_OUTDATED` (410, load/save of an outdated game),
+  `VERSION_CONFLICT` (409, body carries the current server `state`).
 - **Solution check**: the puzzle contains two hashes instead of the ids, so both steps can be checked
   **offline** without showing the answer in the payload:
   - `finalistsHash = SHA-256(gameId + ":" + sorted finalist ids joined by ",")` – checked when exactly

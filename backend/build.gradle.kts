@@ -15,6 +15,8 @@ dependencies {
     implementation("io.quarkus:quarkus-rest-jackson")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-arc")
+    // Generated puzzles are kept in memory, keyed by seed + config (only those are stored).
+    implementation("io.quarkus:quarkus-cache")
     // Kotlin data classes (de)serialize without no-arg constructors.
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

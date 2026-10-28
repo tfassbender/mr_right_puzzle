@@ -3,6 +3,9 @@ package com.tfassbender.mrright.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.tfassbender.mrright.auth.AuthError
 import com.tfassbender.mrright.auth.AuthException
+import com.tfassbender.mrright.game.GameConflictException
+import com.tfassbender.mrright.game.GameError
+import com.tfassbender.mrright.game.GameException
 import jakarta.inject.Inject
 import jakarta.ws.rs.WebApplicationException
 import jakarta.ws.rs.core.Response
@@ -27,6 +30,8 @@ class RestExceptionMapper @Inject constructor(
 
     override fun toResponse(exception: Throwable): Response = when (exception) {
         is AuthException -> error(statusFor(exception.error), exception.error.name, exception.message)
+        is GameException -> error(statusFor(exception.error), exception.error.name, exception.message)
+        is GameConflictException -> conflict(exception)
         is IllegalArgumentException -> error(Response.Status.BAD_REQUEST, "INVALID_REQUEST", exception.message)
         is WebApplicationException -> exception.response
         else -> internalError(exception)
@@ -67,6 +72,21 @@ class RestExceptionMapper @Inject constructor(
 
         AuthError.EMAIL_FEATURES_DISABLED -> Response.Status.SERVICE_UNAVAILABLE
     }
+
+    private fun statusFor(error: GameError): Response.Status = when (error) {
+        GameError.INVALID_GAME_CONFIG,
+        GameError.INVALID_SEED,
+        GameError.INVALID_GAME_STATE,
+        -> Response.Status.BAD_REQUEST
+
+        GameError.GAME_NOT_FOUND -> Response.Status.NOT_FOUND
+        GameError.GAME_OUTDATED -> Response.Status.GONE
+    }
+
+    private fun conflict(exception: GameConflictException): Response =
+        Response.status(Response.Status.CONFLICT)
+            .entity(ConflictResponse("VERSION_CONFLICT", exception.message.orEmpty(), exception.currentState.toDto()))
+            .build()
 
     private fun error(status: Response.Status, code: String, message: String?): Response =
         Response.status(status)

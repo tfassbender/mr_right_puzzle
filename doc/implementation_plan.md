@@ -37,15 +37,17 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 
 **Status:** a 10,000-suitor puzzle takes ~0.2 s. `PuzzleVerifier` runs after every generation.
 
-## Phase 3 – Games backend
+## Phase 3 – Games backend ✅
 
 **Exit criteria:** games can be created, loaded, saved and deleted via REST (RestAssured tests).
 
-- [ ] `Game`, `GameState`, `GameRepository` (one JSON file per game), owner index
-- [ ] `GameService`: create, list with progress, load (regenerate + cache), save state, delete
-- [ ] Finalists and solution hashes; server re-checks `finalistsFound` / `solved`
-- [ ] Optimistic locking (`baseVersion` → 409), outdated-generator games
-- [ ] REST endpoints + HTTP compression
+- [x] `Game`, `GameState`, `GameRepository` (one JSON file per game), owner index
+- [x] `GameService`: create, list with progress, load (regenerate + cache), save state, delete
+- [x] Finalists and solution hashes; server re-checks `finalistsFound` / `solved`
+- [x] Optimistic locking (`baseVersion` → 409), outdated-generator games
+- [x] REST endpoints + HTTP compression
+
+**Status:** `GameState.solved` became `mrRightId` (server-checkable); `finalistsFound` locks the directory.
 
 ## Phase 4 – Game list & new game (frontend)
 
