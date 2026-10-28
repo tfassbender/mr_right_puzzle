@@ -1,5 +1,5 @@
 group = "com.tfassbender.mrright"
-version = "0.0.1"
+version = "1.0.0"
 
 // Builds the SPA and copies it into the backend's classpath, so Quarkus serves it from the single JAR.
 // :backend:quarkusBuild depends on it, so ./gradlew :backend:quarkusBuild always packages the current SPA.
