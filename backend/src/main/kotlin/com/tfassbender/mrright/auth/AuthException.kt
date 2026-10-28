@@ -12,7 +12,7 @@ class AuthException(
 enum class AuthError {
     INVALID_EMAIL,
 
-    /** 4–15 chars: letters incl. äöüÄÖÜß, digits, `_`, `-`. */
+    /** 3–15 chars: letters incl. äöüÄÖÜß, digits, `_`, `-`. */
     INVALID_DISPLAY_NAME,
     PASSWORD_TOO_SHORT,
 

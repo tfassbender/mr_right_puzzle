@@ -75,7 +75,7 @@ abstract class E2eBase {
         return context.newPage();
     }
 
-    /** A display name that is unique per test run and valid (4–15 chars). */
+    /** A display name that is unique per test run and valid (3–15 chars). */
     static String uniqueName() {
         return "e2e" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }

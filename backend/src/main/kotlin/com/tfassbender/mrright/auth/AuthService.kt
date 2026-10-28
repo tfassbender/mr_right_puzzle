@@ -232,7 +232,7 @@ class AuthService(
         // No whitespace, exactly one '@', and a dotted domain.
         private val EMAIL_PATTERN = Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
 
-        private val DISPLAY_NAME_PATTERN = Regex("^[A-Za-z0-9_äöüÄÖÜß-]{4,15}$")
+        private val DISPLAY_NAME_PATTERN = Regex("^[A-Za-z0-9_äöüÄÖÜß-]{3,15}$")
 
         // A locale code like `en`, `de-AT` or `zh-Hant`.
         private val LANGUAGE_PATTERN = Regex("^[a-z]{2,3}(-[A-Za-z]{2,4})?$")

@@ -114,8 +114,15 @@ class AuthServiceTest {
         val auth = service(emailDisabled = true)
 
         assertEquals(AuthError.INVALID_EMAIL, assertThrows<AuthException> { auth.register(emma.copy(email = "no-at")) }.error)
-        assertEquals(AuthError.INVALID_DISPLAY_NAME, assertThrows<AuthException> { auth.register(emma.copy(displayName = "E")) }.error)
+        assertEquals(AuthError.INVALID_DISPLAY_NAME, assertThrows<AuthException> { auth.register(emma.copy(displayName = "Em")) }.error)
         assertEquals(AuthError.PASSWORD_TOO_SHORT, assertThrows<AuthException> { auth.register(emma.copy(password = "short")) }.error)
+    }
+
+    @Test
+    fun `a display name may have just three characters`() {
+        val auth = service(emailDisabled = true)
+
+        assertEquals("Ann", auth.register(emma.copy(displayName = "Ann")).user.displayName)
     }
 
     @Test
