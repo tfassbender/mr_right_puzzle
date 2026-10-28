@@ -81,7 +81,7 @@
   "game_jump": "Zu Abschnitt springen",
   "game_section": "Abschnitt {number}",
   "game_section_left": "{count} übrig",
-  "game_hint_WRONG_FINALISTS": "Nicht alle übrigen Junggesellen passen zu den Hinweisen – such weiter. Das zählt als Fehlversuch.",
+  "game_hint_WRONG_FINALISTS": "Das sind nicht die Finalisten – such weiter. Das zählt als Fehlversuch.",
   "game_hint_TOO_FEW_LEFT": "Es sind weniger Junggesellen übrig, als es Finalisten gibt – jemand wurde versehentlich gestrichen.",
   "game_hint_WRONG_PICK": "Das ist nicht Mr Right – prüf das Stechen noch einmal. Das zählt als Fehlversuch.",
   "game_finalists_title": "Die Finalisten",
@@ -162,5 +162,13 @@
   "conflict_keep_local": "Diesen behalten",
   "conflict_take_server": "Den anderen nehmen",
   "new_game_advanced": "Erweiterte Optionen",
-  "new_game_seed_random": "🎲 Zufällig"
+  "new_game_seed_random": "🎲 Zufällig",
+  "game_possible_match": "Möglicher Treffer: {name}",
+  "game_possible_matches": "Mögliche Treffer: {count} / {total}",
+  "game_submit": "Prüfen",
+  "game_submit_title": "Sind das die Finalisten?",
+  "game_submit_text": "Wenn nicht, zählt es als Fehlversuch.",
+  "game_submit_confirm": "Prüfen",
+  "game_next_unmarked": "Nächster offener",
+  "conflict_possible_matches": "{count} mögliche Treffer"
 }

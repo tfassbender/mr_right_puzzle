@@ -34,15 +34,15 @@ async function newStore(onChange: (state: PlayState) => void = () => {}) {
     clues: [],
     finalistsHash: await finalistsHash(GAME_ID, FINALISTS),
     solutionHash: await solutionHash(GAME_ID, SOLUTION),
-    state: { crossedOut: [], finalistsFound: false, mrRightId: null, solved: false, wrongGuesses: 0, version: 0, updatedAt: '' },
+    state: { crossedOut: [], possibleMatches: [], finalistsFound: false, mrRightId: null, solved: false, wrongGuesses: 0, version: 0, updatedAt: '' },
   };
-  const initial: PlayState = { crossedOut: new Set(), finalistsFound: false, mrRightId: null, wrongGuesses: 0, updatedAt: '' };
+  const initial: PlayState = { crossedOut: new Set(), possibleMatches: new Set(), finalistsFound: false, mrRightId: null, wrongGuesses: 0, updatedAt: '' };
   return new GameStore(game, initial, onChange, () => '2026-10-28T12:00:00Z');
 }
 
-async function crossOutAllBut(store: GameStore, keep: number[]) {
+function crossOutAllBut(store: GameStore, keep: number[]) {
   for (let id = 0; id < 10; id++) {
-    if (!keep.includes(id)) await store.toggle(id);
+    if (!keep.includes(id)) store.toggleNoMatch(id);
   }
 }
 
@@ -51,58 +51,109 @@ describe('GameStore', () => {
     const onChange = vi.fn();
     const store = await newStore(onChange);
 
-    await store.toggle(1);
+    store.toggleNoMatch(1);
     expect(store.state.value.crossedOut.has(1)).toBe(true);
     expect(store.remaining.value).toHaveLength(9);
 
-    await store.toggle(1);
+    store.toggleNoMatch(1);
     expect(store.state.value.crossedOut.has(1)).toBe(false);
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange.mock.calls[0][0].updatedAt).toBe('2026-10-28T12:00:00Z');
   });
 
-  it('undo reverts the last toggles in order', async () => {
+  it('a suitor is either a possible match or crossed out, never both', async () => {
     const store = await newStore();
-    await store.toggle(1);
-    await store.toggle(2);
 
-    await store.undo();
+    store.togglePossibleMatch(1);
+    expect(store.state.value.possibleMatches.has(1)).toBe(true);
+
+    store.toggleNoMatch(1);
+    expect(store.state.value.crossedOut.has(1)).toBe(true);
+    expect(store.state.value.possibleMatches.has(1)).toBe(false);
+
+    store.togglePossibleMatch(1);
+    expect(store.state.value.crossedOut.has(1)).toBe(false);
+    store.togglePossibleMatch(1);
+    expect(store.state.value.possibleMatches.size).toBe(0);
+  });
+
+  it('undo restores the previous marker, step by step', async () => {
+    const store = await newStore();
+    store.toggleNoMatch(1);
+    store.togglePossibleMatch(2);
+    store.toggleNoMatch(2);
+
+    store.undo();
+    expect([...store.state.value.possibleMatches]).toEqual([2]);
     expect([...store.state.value.crossedOut]).toEqual([1]);
-    await store.undo();
-    expect(store.state.value.crossedOut.size).toBe(0);
+    store.undo();
+    store.undo();
+    expect(store.state.value.crossedOut.size + store.state.value.possibleMatches.size).toBe(0);
     expect(store.canUndo.value).toBe(false);
   });
 
-  it('finds the finalists when exactly the right suitors are left and locks the directory', async () => {
+  it('the first unmarked suitor skips crossed out and starred ones', async () => {
     const store = await newStore();
-    await crossOutAllBut(store, FINALISTS);
+    store.toggleNoMatch(0);
+    store.togglePossibleMatch(1);
+    expect(store.firstUnmarked.value).toBe(2);
 
-    expect(store.state.value.finalistsFound).toBe(true);
-    expect(store.state.value.wrongGuesses).toBe(0);
+    crossOutAllBut(store, [0, 1]);
+    expect(store.firstUnmarked.value).toBe(null);
+  });
+
+  it('starring as many suitors as there are finalists allows submitting them', async () => {
+    const store = await newStore();
+    store.togglePossibleMatch(3);
+    expect(store.candidates.value).toBe(null);
+    store.togglePossibleMatch(7);
+    expect(store.candidates.value).toEqual([3, 7]);
+
+    expect(await store.submit()).toBe(true);
+    const state = store.state.value;
+    expect(state.finalistsFound).toBe(true);
+    expect(state.crossedOut.size).toBe(8); // everybody else is crossed out
+    expect(store.remaining.value).toEqual([3, 7]);
     expect(store.canUndo.value).toBe(false);
 
-    await store.toggle(0);
-    expect(store.state.value.crossedOut.has(0)).toBe(true); // still crossed out: locked
+    store.toggleNoMatch(3);
+    expect(store.state.value.crossedOut.has(3)).toBe(false); // locked
+  });
+
+  it('crossing out all but the finalists allows submitting the rest', async () => {
+    const store = await newStore();
+    crossOutAllBut(store, FINALISTS);
+
+    expect(store.candidates.value).toEqual(FINALISTS);
+    expect(await store.submit()).toBe(true);
+    expect(store.state.value.finalistsFound).toBe(true);
   });
 
   it('wrong finalists count as a wrong guess and show a hint', async () => {
     const store = await newStore();
-    await crossOutAllBut(store, [3, 8]);
+    store.togglePossibleMatch(3);
+    store.togglePossibleMatch(8);
 
+    expect(await store.submit()).toBe(false);
     expect(store.state.value.finalistsFound).toBe(false);
     expect(store.state.value.wrongGuesses).toBe(1);
     expect(store.hint.value).toBe('WRONG_FINALISTS');
 
-    await store.toggle(8);
-    expect(store.hint.value).toBe('TOO_FEW_LEFT');
-    await store.toggle(7); // restoring to exactly two left is a new guess – the right one this time
+    store.togglePossibleMatch(8);
     expect(store.hint.value).toBe(null);
-    expect(store.state.value.finalistsFound).toBe(true);
+  });
+
+  it('warns as soon as fewer suitors are left than finalists', async () => {
+    const store = await newStore();
+    crossOutAllBut(store, [3]);
+    expect(store.hint.value).toBe('TOO_FEW_LEFT');
+    expect(store.candidates.value).toBe(null);
   });
 
   it('picking Mr Right checks the solution hash', async () => {
     const store = await newStore();
-    await crossOutAllBut(store, FINALISTS);
+    crossOutAllBut(store, FINALISTS);
+    await store.submit();
 
     expect(await store.pick(3)).toBe(false);
     expect(store.state.value.wrongGuesses).toBe(1);

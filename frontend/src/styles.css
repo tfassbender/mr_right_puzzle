@@ -68,6 +68,28 @@ h1 {
   color: inherit;
 }
 
+.header-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  color: inherit;
+}
+
+.header-button:disabled {
+  opacity: 0.5;
+}
+
+/* Phones: icon only (the label is in the tooltip and aria-label). */
+@media (max-width: 599px) {
+  .wide-only {
+    display: none;
+  }
+}
+
 .app-main {
   max-width: 480px;
   margin: 0 auto;
@@ -352,6 +374,19 @@ select {
   font-weight: bold;
 }
 
+.match-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.match-count {
+  flex: 1;
+}
+
 .small {
   min-height: 36px;
   padding: 4px 12px;
@@ -436,29 +471,58 @@ select {
   font-family: Georgia, 'Times New Roman', serif;
 }
 
+/* A row holds two buttons: the row itself (cross out / restore) and the star (possible match). */
 .suitor-row {
   display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.suitor-select {
+  display: flex;
+  flex: 1;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  padding: 0 12px;
+  min-width: 0;
+  padding: 0 0 0 12px;
   background: none;
   border: 0;
-  border-bottom: 1px solid var(--color-border);
   color: inherit;
   text-align: left;
 }
 
-.suitor-row:disabled {
+.suitor-select:disabled,
+.star-button:disabled {
   cursor: default;
 }
 
-.suitor-row.crossed-out {
+.star-button {
+  width: 52px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-muted);
+  font-size: 1.5rem;
+}
+
+.suitor-row.crossed-out .suitor-select {
+  opacity: 0.35;
+}
+
+.suitor-row.crossed-out .star-button {
   opacity: 0.35;
 }
 
 .suitor-row.crossed-out .suitor-name {
   text-decoration: line-through;
+}
+
+.suitor-row.possible-match {
+  background: #fdf3d8;
+}
+
+.suitor-row.possible-match .star-button {
+  color: #b8860b;
 }
 
 .suitor-number {
@@ -492,9 +556,9 @@ select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  font-size: 15px;
+  min-width: 27px;
+  height: 27px;
+  font-size: 22px;
   line-height: 1;
 }
 
@@ -507,21 +571,21 @@ select {
 
 /* Eyes: a coloured iris with a dark pupil; hair: a coloured lock (rounded top). */
 .icon-eye {
-  width: 16px;
-  min-width: 16px;
-  height: 16px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
   background: radial-gradient(circle, #111 0 25%, var(--swatch) 28% 100%);
   border: 1px solid #555;
   border-radius: 50%;
 }
 
 .icon-hair {
-  width: 14px;
-  min-width: 14px;
-  height: 16px;
+  width: 21px;
+  min-width: 21px;
+  height: 24px;
   background: var(--swatch);
   border: 1px solid #555;
-  border-radius: 8px 8px 2px 2px;
+  border-radius: 12px 12px 3px 3px;
 }
 
 /* Clue panel: bottom sheet on phones, side panel from 900px on. */

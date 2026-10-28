@@ -4,6 +4,7 @@ import com.tfassbender.mrright.auth.UserId
 import com.tfassbender.mrright.puzzle.PuzzleConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
 import java.util.UUID
@@ -25,9 +26,22 @@ class GameRepositoryTest {
     }
 
     @Test
+    fun `games saved before possible matches existed still load`() {
+        val repository = GameRepository(dataDir)
+        val game = game(emma)
+        repository.save(game)
+        val file = dataDir.resolve("games/${game.id}.json")
+        val json = Files.readString(file)
+        Files.writeString(file, json.replace(Regex(""""possibleMatches"\s*:\s*\[\s*],?"""), ""))
+        check(!Files.readString(file).contains("possibleMatches"))
+
+        assertEquals(game, GameRepository(dataDir).findById(game.id))
+    }
+
+    @Test
     fun `saved game can be found by id and owner`() {
         val repository = GameRepository(dataDir)
-        val game = game(emma).copy(state = GameState(setOf(3, 1), true, 7, 2, 4, Instant.parse("2026-10-21T10:00:00Z")))
+        val game = game(emma).copy(state = GameState(setOf(3, 1), setOf(5), true, 7, 2, 4, Instant.parse("2026-10-21T10:00:00Z")))
         repository.save(game)
 
         assertEquals(game, repository.findById(game.id))

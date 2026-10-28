@@ -81,7 +81,7 @@
   "game_jump": "Jump to section",
   "game_section": "Section {number}",
   "game_section_left": "{count} left",
-  "game_hint_WRONG_FINALISTS": "Not all remaining suitors match the clues – keep looking. This counts as a wrong guess.",
+  "game_hint_WRONG_FINALISTS": "These are not the finalists – keep looking. This counts as a wrong guess.",
   "game_hint_TOO_FEW_LEFT": "Fewer suitors are left than there are finalists – someone was crossed out by mistake.",
   "game_hint_WRONG_PICK": "That is not Mr Right – check the tie-break again. This counts as a wrong guess.",
   "game_finalists_title": "The finalists",
@@ -162,5 +162,13 @@
   "conflict_keep_local": "Keep this device's",
   "conflict_take_server": "Take the other one",
   "new_game_advanced": "Advanced options",
-  "new_game_seed_random": "🎲 Random"
+  "new_game_seed_random": "🎲 Random",
+  "game_possible_match": "Possible match: {name}",
+  "game_possible_matches": "Possible matches: {count} / {total}",
+  "game_submit": "Check",
+  "game_submit_title": "Are these the finalists?",
+  "game_submit_text": "If not, it counts as a wrong guess.",
+  "game_submit_confirm": "Check them",
+  "game_next_unmarked": "Next open",
+  "conflict_possible_matches": "{count} possible matches"
 }

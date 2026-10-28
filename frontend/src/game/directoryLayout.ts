@@ -25,6 +25,20 @@ export function sectionHeaderIndex(section: number): number {
   return section * ITEMS_PER_SECTION;
 }
 
+/**
+ * How many rows to keep visible above a row the player jumps to, so they see where they are in the list:
+ * 1 on a phone (about 9 rows fit), 3 on a desktop (14+ rows fit), 2 in between.
+ */
+export function contextRowsAbove(visibleRows: number): number {
+  if (visibleRows <= 10) return 1;
+  return visibleRows <= 13 ? 2 : 3;
+}
+
+/** The item index of a suitor's row – the inverse of [itemAt]. */
+export function suitorIndex(id: number): number {
+  return sectionHeaderIndex(Math.floor(id / SECTION_SIZE)) + 1 + (id % SECTION_SIZE);
+}
+
 /** The first and last suitor id (inclusive) of a section. */
 export function sectionRange(section: number, suitorCount: number): [number, number] {
   const first = section * SECTION_SIZE;

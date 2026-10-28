@@ -13,18 +13,20 @@ data class CreateGameRequestDto(val suitorCount: Int = 0, val finalistCount: Int
 /** [updatedAt] defaults to the epoch, so a missing value can't fail deserialization. */
 data class StateDto(
     val crossedOut: Set<Int> = emptySet(),
+    val possibleMatches: Set<Int> = emptySet(),
     val finalistsFound: Boolean = false,
     val mrRightId: Int? = null,
     val wrongGuesses: Int = 0,
     val updatedAt: Instant = Instant.EPOCH,
 ) {
-    fun toUpdate(): StateUpdate = StateUpdate(crossedOut, finalistsFound, mrRightId, wrongGuesses, updatedAt)
+    fun toUpdate(): StateUpdate = StateUpdate(crossedOut, possibleMatches, finalistsFound, mrRightId, wrongGuesses, updatedAt)
 }
 
 data class SaveStateRequestDto(val baseVersion: Long = -1, val state: StateDto = StateDto())
 
 data class GameStateDto(
     val crossedOut: List<Int>,
+    val possibleMatches: List<Int>,
     val finalistsFound: Boolean,
     val mrRightId: Int?,
     val solved: Boolean,
@@ -67,7 +69,7 @@ data class GameDto(
 data class ConflictResponse(val code: String, val message: String, val state: GameStateDto)
 
 fun GameState.toDto(): GameStateDto =
-    GameStateDto(crossedOut.sorted(), finalistsFound, mrRightId, solved, wrongGuesses, version, updatedAt)
+    GameStateDto(crossedOut.sorted(), possibleMatches.sorted(), finalistsFound, mrRightId, solved, wrongGuesses, version, updatedAt)
 
 fun Game.toSummary(): GameSummaryDto = GameSummaryDto(
     id.toString(), seed, config.suitorCount, config.finalistCount, createdAt, outdated,

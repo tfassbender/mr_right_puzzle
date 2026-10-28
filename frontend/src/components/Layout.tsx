@@ -2,6 +2,7 @@ import type { ComponentChildren } from 'preact';
 import { useLocation } from 'preact-iso';
 import { endSession, session } from '../auth/session';
 import { changeLanguage, getLocale, languageNames, locales, m } from '../i18n/i18n';
+import { headerAction } from './headerSlot';
 
 export function Layout({ children }: { children: ComponentChildren }) {
   const { route } = useLocation();
@@ -18,6 +19,7 @@ export function Layout({ children }: { children: ComponentChildren }) {
           {m.app_title()}
         </a>
         <div class="header-actions">
+          {headerAction.value}
           <select
             aria-label={m.language_label()}
             value={getLocale()}

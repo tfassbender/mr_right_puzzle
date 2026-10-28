@@ -22,6 +22,7 @@ data class Game(
 
 /**
  * The player's progress.
+ * - [crossedOut] / [possibleMatches]: suitors marked as no match / as possible match (starred) – never both.
  * - [finalistsFound]: all non-finalists are crossed out → the tie-break is revealed. Stays true once reached.
  * - [mrRightId]: the correctly picked Mr Right, `null` until solved.
  * - [wrongGuesses]: wrong finalist sets + wrong Mr Right picks.
@@ -29,6 +30,7 @@ data class Game(
  */
 data class GameState(
     val crossedOut: Set<Int>,
+    val possibleMatches: Set<Int> = emptySet(), // default: games saved before possible matches existed
     val finalistsFound: Boolean,
     val mrRightId: Int?,
     val wrongGuesses: Int,
@@ -38,6 +40,6 @@ data class GameState(
     val solved: Boolean get() = mrRightId != null
 
     companion object {
-        fun initial(now: Instant): GameState = GameState(emptySet(), false, null, 0, 0, now)
+        fun initial(now: Instant): GameState = GameState(emptySet(), emptySet(), false, null, 0, 0, now)
     }
 }

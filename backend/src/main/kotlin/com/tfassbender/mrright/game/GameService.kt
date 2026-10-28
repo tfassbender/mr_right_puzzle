@@ -18,6 +18,7 @@ data class CreateGameCommand(val suitorCount: Int, val finalistCount: Int, val s
 /** A state as sent by the client; the server assigns the version. */
 data class StateUpdate(
     val crossedOut: Set<Int>,
+    val possibleMatches: Set<Int>,
     val finalistsFound: Boolean,
     val mrRightId: Int?,
     val wrongGuesses: Int,
@@ -99,7 +100,7 @@ class GameService(
             validate(update, puzzleFor(game.seed, game.config))
 
             val state = GameState(
-                update.crossedOut, update.finalistsFound, update.mrRightId, update.wrongGuesses,
+                update.crossedOut, update.possibleMatches, update.finalistsFound, update.mrRightId, update.wrongGuesses,
                 version = game.state.version + 1,
                 updatedAt = update.updatedAt,
             )
@@ -121,6 +122,8 @@ class GameService(
         val problem = when {
             update.wrongGuesses < 0 -> "negative wrong guesses"
             update.crossedOut.any { it !in suitorIds } -> "crossed out ids out of range"
+            update.possibleMatches.any { it !in suitorIds } -> "possible match ids out of range"
+            update.possibleMatches.any { it in update.crossedOut } -> "suitor marked as no match and possible match"
             update.finalistsFound && !update.crossedOut.containsAll(nonFinalists) -> "finalists not found yet"
             update.mrRightId != null && !update.finalistsFound -> "Mr Right picked before the finalists were found"
             update.mrRightId != null && update.mrRightId != puzzle.solutionId -> "wrong Mr Right"

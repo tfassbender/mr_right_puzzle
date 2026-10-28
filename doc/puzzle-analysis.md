@@ -147,10 +147,11 @@ The puzzle model and the generation algorithm are described in [architecture.md]
 - **Size and difficulty** are configurable when creating a new game: number of suitors (**100–10,000**) and
   number of finalists (1–5). The number of clues is always 12. No further difficulty settings for now
   (e.g. the share of near misses – maybe later, probably not).
-- **Finalists in the UI**: the finalist count is shown from the start. When exactly that many suitors are left
-  and they are the correct finalists, the tie-break is revealed and the player picks Mr Right among them.
-  If they are not the correct finalists, a hint says that not all remaining suitors match the clues, the
-  tie-break stays hidden and it **counts as a wrong guess**.
+- **Finalists in the UI**: the finalist count is shown from the start. Besides crossing out (no match), the
+  player can star suitors as **possible match**. Once exactly as many are starred as there are finalists (or
+  only that many are left), the player can submit them – no need to cross out everybody else first.
+  If they are the correct finalists, the tie-break is revealed and the player picks Mr Right among them.
+  If not, a hint says so, the tie-break stays hidden and it **counts as a wrong guess**.
 - **Solving**: the player marks a candidate as Mr Right and confirms it in a dialog.
   A wrong answer is reported and counted. There is no "losing" – the game continues.
 - **Cheating is accepted**: the solution check runs offline on hashes of the finalist and Mr Right ids

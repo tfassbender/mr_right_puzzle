@@ -6,12 +6,13 @@ import type { LocalGameState } from '../storage/gameStorage';
 import { SyncManager, type SyncDeps } from './syncManager';
 
 function play(crossedOut: number[], updatedAt = '2026-10-28T10:00:00Z'): PlayState {
-  return { crossedOut: new Set(crossedOut), finalistsFound: false, mrRightId: null, wrongGuesses: 0, updatedAt };
+  return { crossedOut: new Set(crossedOut), possibleMatches: new Set(), finalistsFound: false, mrRightId: null, wrongGuesses: 0, updatedAt };
 }
 
 function dto(crossedOut: number[], version: number): GameStateDto {
   return {
     crossedOut,
+    possibleMatches: [],
     finalistsFound: false,
     mrRightId: null,
     solved: false,

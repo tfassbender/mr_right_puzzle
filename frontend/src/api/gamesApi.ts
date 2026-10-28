@@ -37,6 +37,7 @@ export type Clue =
 /** The state as the server stores it. [version] is assigned by the server on every save. */
 export interface GameStateDto {
   crossedOut: number[];
+  possibleMatches?: number[]; // missing in games stored on the device before possible matches existed
   finalistsFound: boolean;
   mrRightId: number | null;
   solved: boolean;
@@ -48,6 +49,7 @@ export interface GameStateDto {
 /** The state the client sends – the server assigns the version. */
 export interface StateUpdateDto {
   crossedOut: number[];
+  possibleMatches: number[];
   finalistsFound: boolean;
   mrRightId: number | null;
   wrongGuesses: number;

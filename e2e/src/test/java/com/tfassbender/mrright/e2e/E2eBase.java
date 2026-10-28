@@ -110,8 +110,8 @@ abstract class E2eBase {
         assertThat(page.getByTestId("remaining")).isVisible();
     }
 
-    /** The directory is virtualized: scroll the row into the rendered window first, then tap it. */
-    static void crossOut(Page page, int id) {
+    /** The directory is virtualized: scroll the row into the rendered window first. */
+    static void scrollToSuitor(Page page, int id) {
         page.evaluate("""
                 id => {
                   const scroll = document.querySelector('.directory-scroll');
@@ -119,7 +119,18 @@ abstract class E2eBase {
                   const index = id + Math.floor(id / 100) + 1; // every section of 100 starts with a header
                   scroll.scrollTop = index * itemHeight - scroll.clientHeight / 2;
                 }""", id);
+    }
+
+    /** Taps a suitor's row: marks him as no match. */
+    static void crossOut(Page page, int id) {
+        scrollToSuitor(page, id);
         page.locator("[data-suitor-id='" + id + "']").click();
         assertThat(page.locator("[data-suitor-id='" + id + "']")).hasAttribute("aria-pressed", "true");
+    }
+
+    /** Taps a suitor's star: marks him as possible match, or removes the mark. */
+    static void toggleStar(Page page, int id) {
+        scrollToSuitor(page, id);
+        page.locator("[data-star-id='" + id + "']").click();
     }
 }

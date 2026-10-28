@@ -205,8 +205,9 @@ data class Game(
 )
 
 data class GameState(
-    val crossedOut: Set<Int>,      // suitor ids
-    val finalistsFound: Boolean,   // all non-finalists crossed out → tie-break revealed (stays true)
+    val crossedOut: Set<Int>,      // suitor ids marked as no match
+    val possibleMatches: Set<Int>, // suitor ids starred as possible match – never also in crossedOut
+    val finalistsFound: Boolean,   // finalists submitted correctly → tie-break revealed (stays true)
     val mrRightId: Int?,           // the correctly picked Mr Right, null until solved (solved = mrRightId != null)
     val wrongGuesses: Int,         // wrong finalist sets + wrong Mr Right picks
     val version: Long,             // incremented by the server on every save
@@ -216,7 +217,9 @@ data class GameState(
 
 - `mrRightId` instead of a plain `solved` flag: the server can re-check it, and the UI can show who was picked.
 - Once `finalistsFound` is reached, the directory is locked (no more crossing out / restoring) – only the tie-break
-  and the pick are left. The server accepts `finalistsFound` only if every non-finalist is crossed out.
+  and the pick are left. On a correct submit the client crosses out everybody else and stars the finalists,
+  so the server accepts `finalistsFound` only if every non-finalist is crossed out.
+- `possibleMatches` defaults to empty, so game files saved before it existed still load.
 
 Player aids (e.g. ticking off applied clues) will add fields to `GameState` later.
 
@@ -266,9 +269,10 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
   `VERSION_CONFLICT` (409, body carries the current server `state`).
 - **Solution check**: the puzzle contains two hashes instead of the ids, so both steps can be checked
   **offline** without showing the answer in the payload:
-  - `finalistsHash = SHA-256(gameId + ":" + sorted finalist ids joined by ",")` – checked when exactly
-    `finalistCount` suitors are left; on a match the tie-break is revealed. A mismatch shows a hint that not
-    all remaining suitors match the clues and counts as a wrong guess.
+  - `finalistsHash = SHA-256(gameId + ":" + sorted finalist ids joined by ",")` – checked when the player
+    submits: the starred suitors once exactly `finalistCount` are starred, otherwise the remaining ones once
+    exactly `finalistCount` are left. On a match the tie-break is revealed; a mismatch shows a hint and
+    counts as a wrong guess.
   - `solutionHash = SHA-256(gameId + ":" + solutionId)` – checked when the player picks Mr Right.
   - Both can be brute-forced; that's accepted (see puzzle-analysis, "Cheating is accepted").
   - The server re-checks `finalistsFound` and `solved` against the real puzzle when the state is saved.
@@ -292,12 +296,15 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 
 - **Login / Register / Verify / Reset**
 - **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button
-- **New game**: suitor count, finalist count, optional seed
+- **New game**: suitor count, finalist count; the seed (with a "random" button) only under "Advanced options"
 - **Game view**:
   - Directory: virtualized list, split into numbered sections of 100 suitors (section = `id / 100`);
-    tap a row to cross out / restore
+    only the rows in view are rendered. Tap a row to cross out / restore, the star at its right marks a
+    possible match. "Next open" in the app header (only the ↓ icon plus tooltip on phones) and opening the game scroll to the first suitor without any marker,
+    keeping 1 (phone) to 3 (big screen) rows above it in view for orientation
   - Clue panel (12 clues + "N finalists"): bottom sheet on mobile, side panel on wide screens
-  - When exactly `finalistCount` suitors are left and `finalistsHash` matches: reveal the tie-break
+  - "Check" (enabled once `finalistCount` suitors are starred or left) + confirmation: when `finalistsHash`
+    matches, reveal the tie-break
     (fewest consonants in the full name, y counts as a consonant)
   - "This is Mr Right" action on a finalist → confirmation dialog → result (wrong guesses are counted, no losing)
   - Offline indicator: note icon with "changes are only stored on this device"

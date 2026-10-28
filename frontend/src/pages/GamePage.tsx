@@ -4,6 +4,7 @@ import { CluePanel } from '../components/CluePanel';
 import { ConflictDialog } from '../components/ConflictDialog';
 import { Directory } from '../components/Directory';
 import { FinalistsPanel } from '../components/FinalistsPanel';
+import { MatchBar } from '../components/MatchBar';
 import { errorText, formatNumber, m } from '../i18n/i18n';
 import { openGameSession, type GameSession } from '../sync/gameSession';
 
@@ -85,10 +86,16 @@ function GameView({ session: { store, sync } }: { session: GameSession }) {
           <button type="button" class="secondary small" disabled={!store.canUndo.value} onClick={() => store.undo()}>
             {m.game_undo()}
           </button>
-          <button type="button" class="primary small clues-button" onClick={() => setCluesOpen(true)}>
+          <button
+            type="button"
+            class="primary small clues-button"
+            aria-expanded={cluesOpen}
+            onClick={() => setCluesOpen((open) => !open)}
+          >
             {m.game_clues()}
           </button>
         </div>
+        {!state.finalistsFound && <MatchBar store={store} />}
         {(status === 'offline' || status === 'error') && (
           <p class={`sync-note ${status}`} role="status" data-testid="sync-note">
             <span aria-hidden="true">📝</span> {status === 'offline' ? m.sync_offline() : m.sync_error()}

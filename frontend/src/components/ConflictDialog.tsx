@@ -9,6 +9,7 @@ function Summary({ title, state }: { title: string; state: PlayState }) {
       <h3>{title}</h3>
       <ul>
         <li>{m.conflict_crossed_out({ count: state.crossedOut.size })}</li>
+        <li>{m.conflict_possible_matches({ count: state.possibleMatches.size })}</li>
         <li>{state.mrRightId !== null ? m.conflict_solved() : m.conflict_not_solved()}</li>
         <li>{m.game_wrong_guesses({ count: state.wrongGuesses })}</li>
         <li>{m.conflict_changed({ time: changedAt })}</li>

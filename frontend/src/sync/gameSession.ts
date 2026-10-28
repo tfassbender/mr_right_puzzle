@@ -1,6 +1,6 @@
 import { loadGame, loadState, saveState } from '../api/gamesApi';
 import { GameStore } from '../game/gameStore';
-import { fromDto } from '../game/playState';
+import { fromDto, withPossibleMatches } from '../game/playState';
 import { loadLocalState, loadStoredGame, storeGame, storeLocalState } from '../storage/gameStorage';
 import { SyncManager, type SyncDeps } from './syncManager';
 
@@ -21,11 +21,10 @@ export async function openGameSession(gameId: string): Promise<GameSession> {
     game = await loadGame(gameId);
     await storeGame(game);
   }
-  const local = (await loadLocalState(gameId)) ?? {
-    state: fromDto(game.state),
-    baseVersion: game.state.version,
-    dirty: false,
-  };
+  const stored = await loadLocalState(gameId);
+  const local = stored
+    ? { ...stored, state: withPossibleMatches(stored.state) }
+    : { state: fromDto(game.state), baseVersion: game.state.version, dirty: false };
 
   // The store and the sync manager report to each other: player changes go to the sync,
   // server states coming in through the sync replace the store's state.

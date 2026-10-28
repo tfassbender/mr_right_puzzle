@@ -63,11 +63,14 @@ class GameResourceTest {
     @Test
     fun `saving state uses optimistic locking`() {
         val id = createGame()
-        val state = mapOf("crossedOut" to listOf(4, 2), "wrongGuesses" to 0, "updatedAt" to "2026-10-28T10:00:00Z")
+        val state = mapOf(
+            "crossedOut" to listOf(4, 2), "possibleMatches" to listOf(7), "wrongGuesses" to 0, "updatedAt" to "2026-10-28T10:00:00Z",
+        )
 
         saveState(id, 0, state).then().statusCode(200)
             .body("version", equalTo(1))
             .body("crossedOut", equalTo(listOf(2, 4)))
+            .body("possibleMatches", equalTo(listOf(7)))
 
         saveState(id, 0, state).then().statusCode(409)
             .body("code", equalTo("VERSION_CONFLICT"))

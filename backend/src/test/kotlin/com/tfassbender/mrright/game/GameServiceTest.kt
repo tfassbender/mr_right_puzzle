@@ -33,8 +33,12 @@ class GameServiceTest {
 
     private fun createGame(): Game = service.create(emma, CreateGameCommand(100, 2, "emma"))
 
-    private fun update(crossedOut: Set<Int> = emptySet(), finalistsFound: Boolean = false, mrRightId: Int? = null) =
-        StateUpdate(crossedOut, finalistsFound, mrRightId, wrongGuesses = 1, updatedAt = now.plusSeconds(60))
+    private fun update(
+        crossedOut: Set<Int> = emptySet(),
+        finalistsFound: Boolean = false,
+        mrRightId: Int? = null,
+        possibleMatches: Set<Int> = emptySet(),
+    ) = StateUpdate(crossedOut, possibleMatches, finalistsFound, mrRightId, wrongGuesses = 1, updatedAt = now.plusSeconds(60))
 
     private fun nonFinalists(puzzle: Puzzle): Set<Int> = puzzle.suitors.map { it.id }.filterNot { it in puzzle.finalistIds }.toSet()
 
@@ -97,8 +101,11 @@ class GameServiceTest {
         assertInvalid(game, update(crossedOut = allButFinalists, finalistsFound = true, mrRightId = wrongId))
         assertInvalid(game, update(mrRightId = puzzle.solutionId))
         assertInvalid(game, update(crossedOut = setOf(100)))
+        assertInvalid(game, update(possibleMatches = setOf(100)))
+        assertInvalid(game, update(crossedOut = setOf(1), possibleMatches = setOf(1)))
 
-        val solved = service.saveState(emma, game.id, 0, update(allButFinalists, true, puzzle.solutionId))
+        val solved = service.saveState(emma, game.id, 0, update(allButFinalists, true, puzzle.solutionId, puzzle.finalistIds))
+        assertEquals(puzzle.finalistIds, solved.possibleMatches)
         assertTrue(solved.solved)
     }
 
