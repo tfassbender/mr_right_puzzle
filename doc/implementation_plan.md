@@ -25,15 +25,17 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 - [x] All clue types (9 types → 12 clues per puzzle) with `matches()`, plus their JSON form
 - [x] Name catalog: 120 first names + 120 surnames (A–Z only)
 
-## Phase 2 – Generator
+## Phase 2 – Generator ✅
 
 **Exit criteria:** any valid seed + config produces a correct puzzle, verified over many seeds.
 
-- [ ] Seed hashing → `Random`, config validation, `GENERATOR_VERSION`
-- [ ] Clue selection with random parameters, in the fixed book order
-- [ ] Name groups, finalists with a unique tie-break, near misses, random suitors, shuffle
-- [ ] Property tests: deterministic, exactly the finalists match, unique tie-break, every clue needed
-- [ ] Performance check with 10,000 suitors
+- [x] Seed hashing → `Random`, config validation, `GENERATOR_VERSION`
+- [x] Clue selection with random parameters, in the fixed book order
+- [x] Name groups, finalists with a unique tie-break, near misses, random suitors, shuffle
+- [x] Property tests: deterministic, exactly the finalists match, unique tie-break, every clue needed
+- [x] Performance check with 10,000 suitors
+
+**Status:** a 10,000-suitor puzzle takes ~0.2 s. `PuzzleVerifier` runs after every generation.
 
 ## Phase 3 – Games backend
 

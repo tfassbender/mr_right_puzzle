@@ -158,6 +158,7 @@ Deterministic: same seed + same config + same generator version → same puzzle.
 
 - **Seed**: a free-text string (entered by the player or random). It is hashed (SHA-256, first 8 bytes)
   into a `Long` for `kotlin.random.Random`. Words like `"emma"` work as seeds.
+- Seeds are 1–64 characters without leading/trailing spaces; a random seed is 10 lowercase letters/digits.
 - **Config**: `suitorCount` (100–10,000) and `finalistCount` (1–5), validated against these limits.
   The clue count is fixed (12).
 - **`GENERATOR_VERSION`**: a constant in the generator, stored with every game. It is increased whenever
@@ -180,6 +181,7 @@ so a valid puzzle comes out in a single pass (no searching for a random director
 4. **Near misses** ("every clue counts"): for every clue create at least one suitor that fails *only* that clue
    (one disallowed attribute value, or a name from that clue's group). Dropping any clue therefore leaves more than
    `finalistCount` candidates.
+   There are `1 + suitorCount / 2000` near misses per clue (1 for small directories, 6 for 10,000 suitors).
 5. **Everybody else**: random name from the whole catalog + random attributes. Re-roll a suitor if it matches all
    clues or is identical (name + all attributes) to an existing suitor.
 6. **Shuffle** all suitors and assign the ids (= directory position).
