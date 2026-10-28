@@ -39,7 +39,7 @@ Requires Java 21 and Node 22.
 | Frontend tests           | `cd frontend && npm test`                       |
 | E2E tests (servers up)   | `./gradlew :e2e:e2eTest`                        |
 | Playwright browser       | `./gradlew :e2e:installBrowsers` (once)         |
-| Production build         | `./gradlew buildFrontend :backend:quarkusBuild` |
+| Production build         | `./gradlew :backend:quarkusBuild` (also builds the frontend) |
 
 Open http://localhost:5174 in dev. The dev backend skips email verification, so registration logs in directly.
 

@@ -66,3 +66,8 @@ tasks.withType<Test> {
 tasks.named("processResources") {
     mustRunAfter(":buildFrontend")
 }
+
+// The packaged JAR is the deliverable and serves the SPA, so packaging always builds the current frontend.
+tasks.named("quarkusBuild") {
+    dependsOn(":buildFrontend")
+}

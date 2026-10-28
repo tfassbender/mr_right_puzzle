@@ -23,7 +23,7 @@ is playable end to end, online and offline. Next: Phase 7 (look & feel, flavour 
 | Backend tests            | `./gradlew :backend:test`                       |
 | Frontend tests / types   | `cd frontend && npm test` / `npm run typecheck` |
 | E2E (both servers up)    | `./gradlew :e2e:e2eTest` (`:e2e:test` alone is skipped on purpose); filter: `./gradlew :e2e:test --tests '*GameE2eTest' :e2e:e2eTest` |
-| Production build         | `./gradlew buildFrontend :backend:quarkusBuild` |
+| Production build         | `./gradlew :backend:quarkusBuild` (also builds the frontend) |
 
 - Windows: stopping a background dev server often leaves `node`/`java` running and holding the port –
   check with `Get-NetTCPConnection -LocalPort 4720,5174` and kill the process tree.
