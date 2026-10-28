@@ -59,11 +59,11 @@
   "new_game_title": "Neues Rätsel",
   "new_game_submit": "Rätsel erstellen",
   "new_game_suitors": "Anzahl der Junggesellen",
-  "new_game_suitors_hint": "{min} bis {max}. Im Buch sind es 6.400.",
+  "new_game_suitors_hint": "{min} bis {max}.",
   "new_game_finalists": "Finalisten",
-  "new_game_finalists_hint": "Junggesellen, die nach allen Hinweisen übrig bleiben. Bei mehreren entscheidet ein Stechen (im Buch 2).",
-  "new_game_seed": "Seed (optional)",
-  "new_game_seed_hint": "Derselbe Seed ergibt immer dasselbe Rätsel. Leer lassen für ein zufälliges.",
+  "new_game_finalists_hint": "Junggesellen, die nach allen Hinweisen übrig bleiben. Bei mehreren entscheidet ein Stechen.",
+  "new_game_seed": "Seed",
+  "new_game_seed_hint": "Derselbe Seed ergibt immer dasselbe Rätsel – teil ihn, um dasselbe Rätsel wie eine Freundin oder ein Freund zu spielen.",
   "error_INVALID_GAME_CONFIG": "Bitte wähle 100 bis 10.000 Junggesellen und 1 bis 5 Finalisten.",
   "error_INVALID_SEED": "Der Seed darf höchstens 64 Zeichen haben.",
   "error_GAME_NOT_FOUND": "Dieses Rätsel gibt es nicht.",
@@ -160,5 +160,7 @@
   "conflict_not_solved": "Noch nicht gelöst",
   "conflict_changed": "Letzte Änderung: {time}",
   "conflict_keep_local": "Diesen behalten",
-  "conflict_take_server": "Den anderen nehmen"
+  "conflict_take_server": "Den anderen nehmen",
+  "new_game_advanced": "Erweiterte Optionen",
+  "new_game_seed_random": "🎲 Zufällig"
 }

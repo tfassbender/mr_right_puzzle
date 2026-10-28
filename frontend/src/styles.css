@@ -652,3 +652,29 @@ select {
   padding-left: 1.2em;
   font-size: 0.9rem;
 }
+
+/* --- New game ----------------------------------------------------------------------------------- */
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.checkbox input {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  margin: 0;
+}
+
+.input-with-button {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-button input {
+  flex: 1;
+  min-width: 0;
+}

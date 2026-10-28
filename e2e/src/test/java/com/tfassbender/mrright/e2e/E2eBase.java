@@ -104,7 +104,8 @@ abstract class E2eBase {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("New puzzle")).click();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(String.valueOf(suitors)).setExact(true)).click();
         page.getByLabel("Finalists").selectOption(String.valueOf(finalists));
-        page.getByLabel("Seed (optional)").fill(seed);
+        page.getByLabel("Advanced options").check();
+        page.getByLabel("Seed", new Page.GetByLabelOptions().setExact(true)).fill(seed);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create puzzle")).click();
         assertThat(page.getByTestId("remaining")).isVisible();
     }
