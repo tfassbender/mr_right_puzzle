@@ -68,8 +68,8 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 - [x] Basic player aids: remaining count, undo
 - [x] E2E test: play a small puzzle to the end (desktop + mobile)
 
-**Status:** the finalists check runs whenever exactly `finalistCount` suitors are left (also after a restore/undo).
-Placeholder icons are emoji and coloured shapes. The e2e module depends on `:backend` to regenerate the puzzle
+**Status:** the finalists check first ran automatically whenever exactly `finalistCount` suitors were left –
+replaced by the explicit "Check" in Phase 6b. Placeholder icons are emoji and coloured shapes. The e2e module depends on `:backend` to regenerate the puzzle
 from its seed and know the solution. A minimal debounced server save is in place; Phase 6 completes it.
 
 ## Phase 6 – Saving, sync & offline ✅
@@ -85,11 +85,31 @@ from its seed and know the solution. A minimal debounced server save is in place
 **Status:** e2e tests cover offline saving (`setOffline`) and the conflict dialog with two browser contexts.
 The game list shows unsaved local progress and falls back to the stored list when offline.
 
+## Phase 6b – Playtest feedback ✅
+
+**Exit criteria:** the first round of feedback from playing is in.
+
+- [x] Display names with 3–15 characters (was 4–15)
+- [x] New game page: no book references; name and seed only under "Advanced options", random seed button
+- [x] Puzzle names: default "Mr Right - <date>" (localized date), " (2)", " (3)" … if taken; seed hidden in the list
+- [x] Possible matches: star button per suitor (`GameState.possibleMatches`), a suitor is never starred and
+      crossed out at once
+- [x] "Check" submits the starred (or the remaining) suitors once there are `finalistCount` of them, with a
+      confirmation – replaces the automatic finalists check
+- [x] "Next open": jumps to the first suitor without a marker (also when a game is opened), keeping 1 (phone)
+      to 3 (desktop) rows above it; lives in the app header, arrow-only on phones
+- [x] "Clues" button toggles the clue panel; attribute icons 50% larger
+- [x] Story & rules dialog in the game list (original Regency intro, no reference to the book)
+
+**Status:** a correct check crosses out everybody else and stars the finalists, so the server's re-check of
+`finalistsFound` stayed unchanged. Older game files without `possibleMatches` or `name` still load.
+
 ## Phase 7 – Polish & release
 
 **Exit criteria:** deployed on the server and nice to play.
 
 - [ ] Look & feel: Regency theme, own icons (decide first – postponed point)
+- [x] Story & rules introduction (done in Phase 6b)
 - [ ] Clue flavour texts (optional)
 - [ ] Production build and deployment
 

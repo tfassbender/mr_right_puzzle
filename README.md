@@ -12,6 +12,8 @@ among hundreds of bachelors by crossing out everyone who doesn't match the clues
 - ✅ Puzzle rules analysed and decided (`doc/puzzle-analysis.md`)
 - ✅ Puzzle generator, games REST API, game list, game view (playable on phone and desktop)
 - ✅ Offline play with IndexedDB, debounced sync with conflict dialog
+- ✅ Playtest feedback: possible matches (star) with "Check", jump to the next open suitor, puzzle names,
+  story & rules dialog
 - ⬜ Look & feel (Regency theme, own icons), clue flavour texts, deployment
 
 ## Tech Stack
@@ -40,6 +42,9 @@ Requires Java 21 and Node 22.
 | Production build         | `./gradlew buildFrontend :backend:quarkusBuild` |
 
 Open http://localhost:5174 in dev. The dev backend skips email verification, so registration logs in directly.
+
+Right after a backend change, the first e2e test may fail with "Something went wrong" while Quarkus dev
+live-reloads – run it again before looking for a bug.
 
 ## Deployment
 
