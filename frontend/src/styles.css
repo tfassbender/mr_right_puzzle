@@ -194,9 +194,15 @@ h2 {
 
 .page-title {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.page-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .page-title h1 {
@@ -314,6 +320,33 @@ select {
 
 .dialog p {
   margin: 0 0 12px;
+}
+
+/* Long dialogs scroll inside, so the close button stays reachable on a phone. */
+.intro-dialog {
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+  max-height: 90vh;
+  max-height: 90dvh;
+}
+
+.intro-content {
+  overflow-y: auto;
+}
+
+.intro-content h3 {
+  margin: 16px 0 8px;
+  font-size: 1.05rem;
+}
+
+.intro-content ol {
+  margin: 0;
+  padding-left: 1.25em;
+}
+
+.intro-content li {
+  margin-bottom: 8px;
 }
 
 .dialog-actions {

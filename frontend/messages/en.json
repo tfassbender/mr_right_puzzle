@@ -171,5 +171,20 @@
   "game_next_unmarked": "Next open",
   "conflict_possible_matches": "{count} possible matches",
   "new_game_name": "Name",
-  "error_INVALID_GAME_NAME": "The name may have at most 60 characters."
+  "error_INVALID_GAME_NAME": "The name may have at most 60 characters.",
+  "intro_open": "Story & rules",
+  "intro_title": "Finding Mr Right",
+  "intro_close": "Let's begin",
+  "intro_story_title": "The story",
+  "intro_story_1": "London, at the height of the Season. The ballrooms are full, the gossip is merciless and every mother in Mayfair is on the hunt. A young lady of excellent sense has decided to find a husband – but not just any husband. She has drawn up a list of wishes: short, firm and not open to negotiation.",
+  "intro_story_2": "The matchmaker has given her a directory of every eligible bachelor in town: hundreds of gentlemen, each with his income, star sign, eyes, hair, temperament and interests. Somewhere among them is the one gentleman who meets every single wish. Help her find him – her Mr Right.",
+  "intro_rules_title": "The rules",
+  "intro_rule_clues": "The lady's wishes are the clues (button “Clues”). Mr Right meets every one of them. The legend there explains the icons in the directory.",
+  "intro_rule_cross_out": "Tap a gentleman to cross him out as no match. Tap him again to restore him – and “Undo” takes back your last steps.",
+  "intro_rule_star": "Tap the star at the right of a gentleman to mark him as a possible match.",
+  "intro_rule_check": "The clues say how many finalists remain after all wishes. Once you have starred that many (or only that many are left), press “Check”. If they are not the finalists, it counts as a wrong guess.",
+  "intro_rule_tiebreak": "With more than one finalist, a final rule – revealed after a correct check – decides which of them is Mr Right.",
+  "intro_rule_pick": "Pick Mr Right among the finalists. A wrong pick counts as a wrong guess, but you cannot lose – just try again.",
+  "intro_rule_letters": "Vowels are A, E, I, O and U. Y counts as a consonant.",
+  "intro_rule_saving": "Your progress is saved automatically and also works offline. Continue on any device with your account."
 }

@@ -171,5 +171,20 @@
   "game_next_unmarked": "Nächster offener",
   "conflict_possible_matches": "{count} mögliche Treffer",
   "new_game_name": "Name",
-  "error_INVALID_GAME_NAME": "Der Name darf höchstens 60 Zeichen haben."
+  "error_INVALID_GAME_NAME": "Der Name darf höchstens 60 Zeichen haben.",
+  "intro_open": "Geschichte & Regeln",
+  "intro_title": "Auf der Suche nach Mr Right",
+  "intro_close": "Los geht's",
+  "intro_story_title": "Die Geschichte",
+  "intro_story_1": "London, mitten in der Ballsaison. Die Ballsäle sind voll, der Klatsch ist gnadenlos und jede Mutter in Mayfair ist auf der Jagd. Eine junge Dame mit ausgezeichnetem Verstand hat beschlossen, sich einen Ehemann zu suchen – aber nicht irgendeinen. Sie hat eine Liste ihrer Wünsche aufgestellt: kurz, bestimmt und nicht verhandelbar.",
+  "intro_story_2": "Die Heiratsvermittlerin hat ihr ein Verzeichnis aller heiratsfähigen Junggesellen der Stadt überlassen: Hunderte Herren, jeder mit Einkommen, Sternzeichen, Augen, Haaren, Temperament und Interessen. Irgendwo unter ihnen ist der eine Herr, der jeden einzelnen Wunsch erfüllt. Hilf ihr, ihn zu finden – ihren Mr Right.",
+  "intro_rules_title": "Die Regeln",
+  "intro_rule_clues": "Die Wünsche der Dame sind die Hinweise (Knopf „Hinweise“). Mr Right erfüllt jeden davon. Die Legende dort erklärt die Symbole im Verzeichnis.",
+  "intro_rule_cross_out": "Tippe auf einen Herrn, um ihn als unpassend zu streichen. Erneutes Tippen holt ihn zurück – und „Rückgängig“ nimmt deine letzten Schritte zurück.",
+  "intro_rule_star": "Tippe auf den Stern rechts neben einem Herrn, um ihn als möglichen Treffer zu markieren.",
+  "intro_rule_check": "Die Hinweise verraten, wie viele Finalisten nach allen Wünschen übrig bleiben. Hast du so viele markiert (oder sind nur noch so viele übrig), drück „Prüfen“. Sind es nicht die Finalisten, zählt das als Fehlversuch.",
+  "intro_rule_tiebreak": "Gibt es mehr als einen Finalisten, entscheidet eine letzte Regel, wer von ihnen Mr Right ist. Sie wird nach einer richtigen Prüfung enthüllt.",
+  "intro_rule_pick": "Wähle Mr Right unter den Finalisten. Eine falsche Wahl zählt als Fehlversuch, aber verlieren kannst du nicht – versuch es einfach noch einmal.",
+  "intro_rule_letters": "Vokale sind A, E, I, O und U. Y zählt als Konsonant.",
+  "intro_rule_saving": "Dein Fortschritt wird automatisch gespeichert und funktioniert auch offline. Mit deinem Konto spielst du auf jedem Gerät weiter."
 }

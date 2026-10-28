@@ -295,7 +295,9 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 ### Pages
 
 - **Login / Register / Verify / Reset**
-- **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button
+- **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button, and a
+  "Story & rules" button next to it: a dialog with a short original Regency story (no reference to the book)
+  and the rules
 - **New game**: suitor count, finalist count; under "Advanced options" the name and the seed (with a
   "random" button). The name defaults to "Mr Right - <date>" (date in the player's language), with " (2)",
   " (3)" … if the player already has a game with that name – computed in the frontend from the game list.

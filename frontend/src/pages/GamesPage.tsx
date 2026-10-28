@@ -3,6 +3,7 @@ import { ApiError } from '../api/client';
 import { deleteGame, listGames, type GameSummary } from '../api/gamesApi';
 import { session } from '../auth/session';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { IntroDialog } from '../components/IntroDialog';
 import { errorText, getLocale, m } from '../i18n/i18n';
 import { deleteStoredGame, loadLocalState, loadStoredGameList, storeGameList } from '../storage/gameStorage';
 
@@ -47,6 +48,7 @@ export function GamesPage() {
   const [error, setError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<GameSummary | null>(null);
   const [offline, setOffline] = useState(false);
+  const [introOpen, setIntroOpen] = useState(false);
 
   useEffect(() => {
     fetchGames().then(
@@ -76,9 +78,14 @@ export function GamesPage() {
     <div class="stack">
       <div class="page-title">
         <h1>{m.games_title()}</h1>
-        <a href="/new" class="primary button-link">
-          {m.games_new()}
-        </a>
+        <div class="page-actions">
+          <button type="button" class="secondary" onClick={() => setIntroOpen(true)}>
+            {m.intro_open()}
+          </button>
+          <a href="/new" class="primary button-link">
+            {m.games_new()}
+          </a>
+        </div>
       </div>
       <p class="muted">{m.games_welcome({ name: user.displayName })}</p>
       {offline && (
@@ -95,6 +102,7 @@ export function GamesPage() {
       <ul class="game-list">
         {games?.map((game) => <GameItem key={game.id} game={game} onDelete={() => setToDelete(game)} />)}
       </ul>
+      {introOpen && <IntroDialog onClose={() => setIntroOpen(false)} />}
       {toDelete && (
         <ConfirmDialog
           title={m.games_delete_title()}
