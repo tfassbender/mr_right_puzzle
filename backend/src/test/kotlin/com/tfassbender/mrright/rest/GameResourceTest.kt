@@ -33,7 +33,7 @@ class GameResourceTest {
 
     private fun createGame(seed: String = "emma"): String =
         asPlayer()
-            .body(mapOf("suitorCount" to 100, "finalistCount" to 2, "seed" to seed))
+            .body(mapOf("suitorCount" to 100, "finalistCount" to 2, "seed" to seed, "name" to "Sunday puzzle"))
             .post("/api/games")
             .then().statusCode(201)
             .body("seed", equalTo(seed))
@@ -51,6 +51,7 @@ class GameResourceTest {
         asPlayer().get("/api/games").then().statusCode(200)
             .body("", hasSize<Any>(1))
             .body("[0].id", equalTo(id))
+            .body("[0].name", equalTo("Sunday puzzle"))
 
         asPlayer().get("/api/games/$id").then().statusCode(200)
             .body("suitors", hasSize<Any>(100))
@@ -58,6 +59,7 @@ class GameResourceTest {
             .body("clues[0].type", notNullValue())
             .body("finalistsHash", notNullValue())
             .body("state.version", equalTo(0))
+            .body("name", equalTo("Sunday puzzle"))
     }
 
     @Test

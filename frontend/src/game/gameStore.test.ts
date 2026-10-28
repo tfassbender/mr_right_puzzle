@@ -25,6 +25,7 @@ function suitor(id: number): Suitor {
 async function newStore(onChange: (state: PlayState) => void = () => {}) {
   const game: GameDto = {
     id: GAME_ID,
+    name: 'Emma',
     seed: 'emma',
     suitorCount: 10,
     finalistCount: 2,

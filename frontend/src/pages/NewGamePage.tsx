@@ -1,12 +1,26 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { useLocation } from 'preact-iso';
-import { createGame, FINALIST_COUNT_MAX, SUITOR_COUNT_MAX, SUITOR_COUNT_MIN } from '../api/gamesApi';
+import { createGame, FINALIST_COUNT_MAX, listGames, SUITOR_COUNT_MAX, SUITOR_COUNT_MIN } from '../api/gamesApi';
 import { Form } from '../components/Form';
+import { defaultGameName, GAME_NAME_MAX_LENGTH } from '../game/gameName';
 import { randomSeed } from '../game/randomSeed';
-import { formatNumber, m } from '../i18n/i18n';
+import { formatNumber, getLocale, m } from '../i18n/i18n';
 
 const SUITOR_PRESETS = [100, 500, 1000, 6400];
 const FINALIST_COUNTS = Array.from({ length: FINALIST_COUNT_MAX }, (_, i) => i + 1);
+
+/** "Mr Right - <today>", unique among the player's games. Without the game list, just today's name. */
+function useSuggestedName(): string {
+  const today = new Date().toLocaleDateString(getLocale(), { dateStyle: 'medium' });
+  const [existingNames, setExistingNames] = useState<Array<string | null>>([]);
+  useEffect(() => {
+    listGames().then(
+      (games) => setExistingNames(games.map((game) => game.name)),
+      () => {},
+    );
+  }, []);
+  return defaultGameName(today, existingNames);
+}
 
 export function NewGamePage() {
   const { route } = useLocation();
@@ -14,17 +28,21 @@ export function NewGamePage() {
   const [finalistCount, setFinalistCount] = useState(2);
   const [advanced, setAdvanced] = useState(false);
   const [seed, setSeed] = useState('');
+  const [name, setName] = useState('');
+  const suggestedName = useSuggestedName();
 
   const submit = async () => {
-    // Without the advanced options the server picks a random seed.
+    // Without the advanced options the server picks a random seed and the game gets the suggested name.
     const chosenSeed = advanced ? seed.trim() || undefined : undefined;
-    const game = await createGame({ suitorCount, finalistCount, seed: chosenSeed });
+    const chosenName = (advanced && name.trim()) || suggestedName;
+    const game = await createGame({ suitorCount, finalistCount, seed: chosenSeed, name: chosenName });
     route(`/games/${game.id}`);
   };
 
   const toggleAdvanced = (checked: boolean) => {
     setAdvanced(checked);
     if (checked && !seed) setSeed(randomSeed());
+    if (checked && !name) setName(suggestedName);
   };
 
   return (
@@ -75,6 +93,19 @@ export function NewGamePage() {
         <input type="checkbox" checked={advanced} onChange={(e) => toggleAdvanced(e.currentTarget.checked)} />
         {m.new_game_advanced()}
       </label>
+      {advanced && (
+        <div class="field">
+          <label for="name">{m.new_game_name()}</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            value={name}
+            maxLength={GAME_NAME_MAX_LENGTH}
+            onInput={(e) => setName(e.currentTarget.value)}
+          />
+        </div>
+      )}
       {advanced && (
         <div class="field">
           <label for="seed">{m.new_game_seed()}</label>

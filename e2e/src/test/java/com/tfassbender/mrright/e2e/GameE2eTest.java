@@ -70,6 +70,7 @@ class GameE2eTest extends E2eBase {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("My puzzles").setExact(true)).first().click();
         assertThat(page.getByTestId("game-item")).containsText("Solved – Mr Right found!");
         assertThat(page.getByTestId("game-item")).containsText("wrong guesses: 2");
+        assertThat(page.getByTestId("game-item")).containsText("Mr Right - "); // the suggested default name
     }
 
     /** On a phone the clues are a bottom sheet; the "Clues" button opens and closes it. */

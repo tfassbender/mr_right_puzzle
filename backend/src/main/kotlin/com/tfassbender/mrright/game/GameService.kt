@@ -12,8 +12,8 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-/** [seed] is optional: `null` or blank means a random seed. */
-data class CreateGameCommand(val suitorCount: Int, val finalistCount: Int, val seed: String?)
+/** [seed] is optional: `null` or blank means a random seed. [name] is optional too: `null` or blank means none. */
+data class CreateGameCommand(val suitorCount: Int, val finalistCount: Int, val seed: String?, val name: String? = null)
 
 /** A state as sent by the client; the server assigns the version. */
 data class StateUpdate(
@@ -62,6 +62,10 @@ class GameService(
         if (!Seeds.isValid(seed)) {
             throw GameException(GameError.INVALID_SEED, "Seeds have 1–${Seeds.MAX_LENGTH} characters")
         }
+        val name = command.name?.trim()?.takeIf { it.isNotEmpty() }
+        if (name != null && name.length > Game.NAME_MAX_LENGTH) {
+            throw GameException(GameError.INVALID_GAME_NAME, "Names have at most ${Game.NAME_MAX_LENGTH} characters")
+        }
         val now = clock.instant()
         val game = Game(
             id = idGenerator(),
@@ -71,6 +75,7 @@ class GameService(
             generatorVersion = PuzzleGenerator.GENERATOR_VERSION,
             createdAt = now,
             state = GameState.initial(now),
+            name = name,
         )
         games.save(game)
         return game

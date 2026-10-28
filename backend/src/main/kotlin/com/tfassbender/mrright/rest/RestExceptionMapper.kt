@@ -76,6 +76,7 @@ class RestExceptionMapper @Inject constructor(
     private fun statusFor(error: GameError): Response.Status = when (error) {
         GameError.INVALID_GAME_CONFIG,
         GameError.INVALID_SEED,
+        GameError.INVALID_GAME_NAME,
         GameError.INVALID_GAME_STATE,
         -> Response.Status.BAD_REQUEST
 

@@ -9,6 +9,7 @@ class GameException(
 enum class GameError {
     INVALID_GAME_CONFIG,
     INVALID_SEED,
+    INVALID_GAME_NAME,
 
     /** Also for games of other players, so ids of foreign games aren't revealed. */
     GAME_NOT_FOUND,

@@ -6,7 +6,10 @@ import com.tfassbender.mrright.puzzle.PuzzleGenerator
 import java.time.Instant
 import java.util.UUID
 
-/** A player's game. Only seed + config are stored – the puzzle is regenerated from them on demand. */
+/**
+ * A player's game. Only seed + config are stored – the puzzle is regenerated from them on demand.
+ * [name] is chosen by the player (the frontend suggests a default); `null` for games created before names existed.
+ */
 data class Game(
     val id: UUID,
     val ownerId: UserId,
@@ -15,9 +18,14 @@ data class Game(
     val generatorVersion: Int, // GENERATOR_VERSION at creation time
     val createdAt: Instant,
     val state: GameState,
+    val name: String? = null,
 ) {
     /** The generator changed since creation, so the puzzle can't be rebuilt – the game can only be deleted. */
     val outdated: Boolean get() = generatorVersion != PuzzleGenerator.GENERATOR_VERSION
+
+    companion object {
+        const val NAME_MAX_LENGTH = 60
+    }
 }
 
 /**

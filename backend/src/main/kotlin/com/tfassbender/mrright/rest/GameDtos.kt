@@ -8,7 +8,12 @@ import com.tfassbender.mrright.puzzle.Clue
 import com.tfassbender.mrright.puzzle.Suitor
 import java.time.Instant
 
-data class CreateGameRequestDto(val suitorCount: Int = 0, val finalistCount: Int = 0, val seed: String? = null)
+data class CreateGameRequestDto(
+    val suitorCount: Int = 0,
+    val finalistCount: Int = 0,
+    val seed: String? = null,
+    val name: String? = null,
+)
 
 /** [updatedAt] defaults to the epoch, so a missing value can't fail deserialization. */
 data class StateDto(
@@ -38,6 +43,7 @@ data class GameStateDto(
 /** One entry of the game list – no puzzle, so listing doesn't regenerate anything. */
 data class GameSummaryDto(
     val id: String,
+    val name: String?,
     val seed: String,
     val suitorCount: Int,
     val finalistCount: Int,
@@ -53,6 +59,7 @@ data class GameSummaryDto(
 /** The full puzzle plus state. The finalists and Mr Right are only included as hashes. */
 data class GameDto(
     val id: String,
+    val name: String?,
     val seed: String,
     val suitorCount: Int,
     val finalistCount: Int,
@@ -72,11 +79,11 @@ fun GameState.toDto(): GameStateDto =
     GameStateDto(crossedOut.sorted(), possibleMatches.sorted(), finalistsFound, mrRightId, solved, wrongGuesses, version, updatedAt)
 
 fun Game.toSummary(): GameSummaryDto = GameSummaryDto(
-    id.toString(), seed, config.suitorCount, config.finalistCount, createdAt, outdated,
+    id.toString(), name, seed, config.suitorCount, config.finalistCount, createdAt, outdated,
     state.crossedOut.size, state.finalistsFound, state.solved, state.wrongGuesses, state.updatedAt,
 )
 
 fun LoadedGame.toDto(): GameDto = GameDto(
-    game.id.toString(), game.seed, game.config.suitorCount, game.config.finalistCount, game.generatorVersion,
+    game.id.toString(), game.name, game.seed, game.config.suitorCount, game.config.finalistCount, game.generatorVersion,
     game.createdAt, puzzle.suitors, puzzle.clues, finalistsHash, solutionHash, game.state.toDto(),
 )

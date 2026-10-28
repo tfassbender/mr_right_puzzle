@@ -47,7 +47,6 @@
   "error_UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuche es noch einmal.",
   "cancel": "Abbrechen",
   "games_new": "Neues Rätsel",
-  "games_seed": "Rätsel „{seed}“",
   "games_size": "{suitors} Junggesellen · {finalists} Finalisten",
   "games_progress": "{crossedOut} von {total} gestrichen",
   "games_solved": "Gelöst – Mr Right gefunden!",
@@ -55,7 +54,7 @@
   "games_wrong_guesses": "Fehlversuche: {count}",
   "games_delete": "Löschen",
   "games_delete_title": "Rätsel löschen?",
-  "games_delete_text": "Das Rätsel „{seed}“ und sein Fortschritt werden gelöscht.",
+  "games_delete_text": "Das Rätsel „{name}“ und sein Fortschritt werden gelöscht.",
   "new_game_title": "Neues Rätsel",
   "new_game_submit": "Rätsel erstellen",
   "new_game_suitors": "Anzahl der Junggesellen",
@@ -170,5 +169,7 @@
   "game_submit_text": "Wenn nicht, zählt es als Fehlversuch.",
   "game_submit_confirm": "Prüfen",
   "game_next_unmarked": "Nächster offener",
-  "conflict_possible_matches": "{count} mögliche Treffer"
+  "conflict_possible_matches": "{count} mögliche Treffer",
+  "new_game_name": "Name",
+  "error_INVALID_GAME_NAME": "Der Name darf höchstens 60 Zeichen haben."
 }

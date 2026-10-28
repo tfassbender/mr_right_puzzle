@@ -58,6 +58,7 @@ export interface StateUpdateDto {
 
 export interface GameSummary {
   id: string;
+  name: string | null; // null for games created before names existed
   seed: string;
   suitorCount: number;
   finalistCount: number;
@@ -72,6 +73,7 @@ export interface GameSummary {
 
 export interface GameDto {
   id: string;
+  name: string | null;
   seed: string;
   suitorCount: number;
   finalistCount: number;
@@ -88,6 +90,7 @@ export interface NewGame {
   suitorCount: number;
   finalistCount: number;
   seed?: string;
+  name?: string;
 }
 
 export const SUITOR_COUNT_MIN = 100;

@@ -13,6 +13,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class GameServiceTest {
@@ -59,6 +60,15 @@ class GameServiceTest {
 
         assertEquals(GameError.INVALID_GAME_CONFIG, assertThrows<GameException> { service.create(emma, CreateGameCommand(50, 2, null)) }.error)
         assertEquals(GameError.INVALID_SEED, assertThrows<GameException> { service.create(emma, CreateGameCommand(100, 2, "x".repeat(65))) }.error)
+    }
+
+    @Test
+    fun `the name is optional, trimmed and limited in length`() {
+        assertEquals("Sunday", service.create(emma, CreateGameCommand(100, 2, null, "  Sunday ")).name)
+        assertNull(service.create(emma, CreateGameCommand(100, 2, null, " ")).name)
+
+        val tooLong = CreateGameCommand(100, 2, null, "x".repeat(Game.NAME_MAX_LENGTH + 1))
+        assertEquals(GameError.INVALID_GAME_NAME, assertThrows<GameException> { service.create(emma, tooLong) }.error)
     }
 
     @Test

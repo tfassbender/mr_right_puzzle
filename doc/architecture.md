@@ -296,7 +296,11 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 
 - **Login / Register / Verify / Reset**
 - **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button
-- **New game**: suitor count, finalist count; the seed (with a "random" button) only under "Advanced options"
+- **New game**: suitor count, finalist count; under "Advanced options" the name and the seed (with a
+  "random" button). The name defaults to "Mr Right - <date>" (date in the player's language), with " (2)",
+  " (3)" … if the player already has a game with that name – computed in the frontend from the game list.
+  Games created before names existed have none and are listed with the default name of their creation date.
+  The game list doesn't show the seed
 - **Game view**:
   - Directory: virtualized list, split into numbered sections of 100 suitors (section = `id / 100`);
     only the rows in view are rendered. Tap a row to cross out / restore, the star at its right marks a

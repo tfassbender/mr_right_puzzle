@@ -3,7 +3,7 @@ import { ApiError } from '../api/client';
 import { deleteGame, listGames, type GameSummary } from '../api/gamesApi';
 import { session } from '../auth/session';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { errorText, m } from '../i18n/i18n';
+import { errorText, getLocale, m } from '../i18n/i18n';
 import { deleteStoredGame, loadLocalState, loadStoredGameList, storeGameList } from '../storage/gameStorage';
 
 /**
@@ -102,18 +102,23 @@ export function GamesPage() {
           onConfirm={confirmDelete}
           onCancel={() => setToDelete(null)}
         >
-          <p>{m.games_delete_text({ seed: toDelete.seed })}</p>
+          <p>{m.games_delete_text({ name: gameTitle(toDelete) })}</p>
         </ConfirmDialog>
       )}
     </div>
   );
 }
 
+/** Games created before names existed get the default name of their creation date. */
+function gameTitle(game: GameSummary): string {
+  return game.name ?? `Mr Right - ${new Date(game.createdAt).toLocaleDateString(getLocale(), { dateStyle: 'medium' })}`;
+}
+
 function GameItem({ game, onDelete }: { game: GameSummary; onDelete: () => void }) {
   const percent = Math.round((game.crossedOutCount / game.suitorCount) * 100);
   const title = (
     <>
-      <strong>{m.games_seed({ seed: game.seed })}</strong>
+      <strong>{gameTitle(game)}</strong>
       <span class="muted">
         {m.games_size({ suitors: game.suitorCount, finalists: game.finalistCount })}
       </span>

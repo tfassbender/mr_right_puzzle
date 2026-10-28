@@ -47,7 +47,6 @@
   "error_UNKNOWN": "Something went wrong. Please try again.",
   "cancel": "Cancel",
   "games_new": "New puzzle",
-  "games_seed": "Puzzle “{seed}”",
   "games_size": "{suitors} suitors · {finalists} finalists",
   "games_progress": "{crossedOut} of {total} crossed out",
   "games_solved": "Solved – Mr Right found!",
@@ -55,7 +54,7 @@
   "games_wrong_guesses": "wrong guesses: {count}",
   "games_delete": "Delete",
   "games_delete_title": "Delete puzzle?",
-  "games_delete_text": "The puzzle “{seed}” and its progress will be deleted.",
+  "games_delete_text": "The puzzle “{name}” and its progress will be deleted.",
   "new_game_title": "New puzzle",
   "new_game_submit": "Create puzzle",
   "new_game_suitors": "Number of suitors",
@@ -170,5 +169,7 @@
   "game_submit_text": "If not, it counts as a wrong guess.",
   "game_submit_confirm": "Check them",
   "game_next_unmarked": "Next open",
-  "conflict_possible_matches": "{count} possible matches"
+  "conflict_possible_matches": "{count} possible matches",
+  "new_game_name": "Name",
+  "error_INVALID_GAME_NAME": "The name may have at most 60 characters."
 }
