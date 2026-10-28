@@ -32,3 +32,8 @@ export function errorText(error: unknown): string {
   const message = (m as unknown as Record<string, (() => string) | undefined>)[`error_${code}`];
   return message ? message() : m.error_UNKNOWN();
 }
+
+/** Numbers with the locale's grouping, e.g. 6,400 / 6.400. */
+export function formatNumber(value: number): string {
+  return value.toLocaleString(getLocale());
+}

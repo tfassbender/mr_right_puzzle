@@ -49,13 +49,13 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 
 **Status:** `GameState.solved` became `mrRightId` (server-checkable); `finalistsFound` locks the directory.
 
-## Phase 4 – Game list & new game (frontend)
+## Phase 4 – Game list & new game (frontend) ✅
 
 **Exit criteria:** a logged-in player can create a game and see it in the list.
 
-- [ ] API client + DTO types
-- [ ] Game list with progress, outdated marker, delete
-- [ ] New game page: suitor count, finalist count, optional seed
+- [x] API client + DTO types
+- [x] Game list with progress, outdated marker, delete
+- [x] New game page: suitor count, finalist count, optional seed
 
 ## Phase 5 – Game view
 

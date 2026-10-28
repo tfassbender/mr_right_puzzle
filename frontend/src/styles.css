@@ -152,3 +152,151 @@ button {
   margin: 0;
   color: var(--color-error);
 }
+
+h2 {
+  margin: 0 0 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stack > p,
+.stack > h1 {
+  margin: 0;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.page-title h1 {
+  margin: 0;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.secondary {
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+}
+
+select {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.header-actions select {
+  min-height: 0;
+  padding: 2px 4px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 36px;
+  padding: 4px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.chip.selected {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+}
+
+/* --- Game list ---------------------------------------------------------------------------------- */
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-item-title {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress {
+  height: 6px;
+  overflow: hidden;
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--color-primary);
+}
+
+/* --- Dialog ------------------------------------------------------------------------------------- */
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+  background: rgb(0 0 0 / 40%);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+}
+
+.dialog p {
+  margin: 0 0 12px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: var(--space);
+}
