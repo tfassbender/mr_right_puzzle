@@ -57,16 +57,20 @@ A short, phased roadmap. Details live in [puzzle-analysis.md](puzzle-analysis.md
 - [x] Game list with progress, outdated marker, delete
 - [x] New game page: suitor count, finalist count, optional seed
 
-## Phase 5 – Game view
+## Phase 5 – Game view ✅
 
 **Exit criteria:** a puzzle can be played to the end on a phone, online.
 
-- [ ] Virtualized directory with sections of 100, tap to cross out / restore
-- [ ] Attribute icons (placeholders) and clue texts in en/de
-- [ ] Clue panel: bottom sheet on mobile, side panel on desktop, finalist count
-- [ ] Finalists check (hint + wrong guess on mismatch), tie-break reveal, pick Mr Right with confirmation
-- [ ] Basic player aids: remaining count, undo
-- [ ] E2E test: play a small puzzle to the end (desktop + mobile)
+- [x] Virtualized directory with sections of 100, tap to cross out / restore
+- [x] Attribute icons (placeholders) and clue texts in en/de
+- [x] Clue panel: bottom sheet on mobile, side panel on desktop, finalist count
+- [x] Finalists check (hint + wrong guess on mismatch), tie-break reveal, pick Mr Right with confirmation
+- [x] Basic player aids: remaining count, undo
+- [x] E2E test: play a small puzzle to the end (desktop + mobile)
+
+**Status:** the finalists check runs whenever exactly `finalistCount` suitors are left (also after a restore/undo).
+Placeholder icons are emoji and coloured shapes. The e2e module depends on `:backend` to regenerate the puzzle
+from its seed and know the solution. A minimal debounced server save is in place; Phase 6 completes it.
 
 ## Phase 6 – Saving, sync & offline
 

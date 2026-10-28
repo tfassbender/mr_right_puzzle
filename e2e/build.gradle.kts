@@ -8,6 +8,8 @@ repositories {
 
 dependencies {
     testImplementation("com.microsoft.playwright:playwright:1.50.0")
+    // The generator is deterministic, so the tests rebuild a puzzle from its seed to know the solution.
+    testImplementation(project(":backend"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
     // Gradle 9 no longer puts the JUnit Platform launcher on the test runtime classpath implicitly.

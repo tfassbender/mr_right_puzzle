@@ -6,6 +6,7 @@ import { fetchMe, loadAuthConfig } from './auth/authApi';
 import { endSession, session, updateSessionUser } from './auth/session';
 import { Layout } from './components/Layout';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { GamePage } from './pages/GamePage';
 import { GamesPage } from './pages/GamesPage';
 import { LoginPage } from './pages/LoginPage';
 import { NewGamePage } from './pages/NewGamePage';
@@ -30,6 +31,7 @@ function loginRequired(page: ComponentType) {
 
 const ProtectedGamesPage = loginRequired(GamesPage);
 const ProtectedNewGamePage = loginRequired(NewGamePage);
+const ProtectedGamePage = loginRequired(GamePage);
 
 /** Refreshes the stored user on start; an invalid or expired token ends the session. Offline, the stored one is kept. */
 async function refreshSession(): Promise<void> {
@@ -53,6 +55,7 @@ export function App() {
         <Router>
           <Route path="/" component={ProtectedGamesPage} />
           <Route path="/new" component={ProtectedNewGamePage} />
+          <Route path="/games/:id" component={ProtectedGamePage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route path="/verify-email" component={VerifyEmailPage} />
