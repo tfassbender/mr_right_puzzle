@@ -41,6 +41,11 @@ class GameResource(private val games: GameService) {
     fun load(@Context securityContext: SecurityContext, @PathParam("id") id: String): GameDto =
         games.load(currentUserId(securityContext), gameId(id)).toDto()
 
+    @GET
+    @Path("/{id}/state")
+    fun loadState(@Context securityContext: SecurityContext, @PathParam("id") id: String): GameStateDto =
+        games.loadState(currentUserId(securityContext), gameId(id)).toDto()
+
     @PUT
     @Path("/{id}/state")
     fun saveState(

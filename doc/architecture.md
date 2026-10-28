@@ -254,6 +254,7 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 | GET    | `/games`                   | List own games with a progress summary                   |
 | POST   | `/games`                   | Create a game `{ suitorCount, finalistCount, seed? }`    |
 | GET    | `/games/{id}`              | Puzzle (suitors, clues, `finalistCount`, hashes) + state |
+| GET    | `/games/{id}/state`        | Only the state (cheap refresh on open / tab return)      |
 | PUT    | `/games/{id}/state`        | Save state `{ baseVersion, state }` → new version or 409 |
 | DELETE | `/games/{id}`              | Delete a game                                            |
 | GET    | `/info`, `/health`         | Version info, health check                               |

@@ -89,6 +89,9 @@ class GameService(
         )
     }
 
+    /** Just the state – what the client polls to pick up changes from another device. */
+    fun loadState(ownerId: UserId, gameId: UUID): GameState = playableGame(ownerId, gameId).state
+
     fun saveState(ownerId: UserId, gameId: UUID, baseVersion: Long, update: StateUpdate): GameState =
         synchronized(lockFor(gameId)) {
             val game = playableGame(ownerId, gameId)

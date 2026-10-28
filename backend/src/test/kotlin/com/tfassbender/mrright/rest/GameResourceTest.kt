@@ -72,6 +72,10 @@ class GameResourceTest {
         saveState(id, 0, state).then().statusCode(409)
             .body("code", equalTo("VERSION_CONFLICT"))
             .body("state.version", equalTo(1))
+
+        asPlayer().get("/api/games/$id/state").then().statusCode(200)
+            .body("version", equalTo(1))
+            .body("crossedOut", equalTo(listOf(2, 4)))
     }
 
     @Test
