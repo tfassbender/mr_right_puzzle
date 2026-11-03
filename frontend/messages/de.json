@@ -186,5 +186,12 @@
   "intro_rule_tiebreak": "Gibt es mehr als einen Finalisten, entscheidet eine letzte Regel, wer von ihnen Mr Right ist. Sie wird nach einer richtigen Prüfung enthüllt.",
   "intro_rule_pick": "Wähle Mr Right unter den Finalisten. Eine falsche Wahl zählt als Fehlversuch, aber verlieren kannst du nicht – versuch es einfach noch einmal.",
   "intro_rule_letters": "Vokale sind A, E, I, O und U. Y zählt als Konsonant.",
-  "intro_rule_saving": "Dein Fortschritt wird automatisch gespeichert und funktioniert auch offline. Mit deinem Konto spielst du auf jedem Gerät weiter."
+  "intro_rule_saving": "Dein Fortschritt wird automatisch gespeichert und funktioniert auch offline. Mit deinem Konto spielst du auf jedem Gerät weiter.",
+  "about_open": "Über",
+  "about_title": "Über",
+  "about_version": "Version {version}",
+  "about_description": "Ein logisches Ausschluss-Rätsel: Finde den einen Mr Right unter Hunderten Junggesellen, indem du jeden streichst, der nicht zu den Wünschen der Dame passt.",
+  "about_author": "Autor:",
+  "about_source": "Quellcode auf GitHub",
+  "about_copyright": "© {year} {author}"
 }

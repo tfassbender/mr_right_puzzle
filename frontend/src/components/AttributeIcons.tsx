@@ -3,9 +3,9 @@ import { attributeName, valueText } from '../game/clueText';
 
 // Placeholder icons (emoji and coloured shapes) until the Regency look & feel gets its own icons.
 
-const ELEMENT_ICONS: Record<string, string> = { AIR: '💨', FIRE: '🔥', WATER: '💧', EARTH: '🌿' };
+const ELEMENT_ICONS: Record<string, string> = { AIR: '💨', FIRE: '🔥', WATER: '💧', EARTH: '🏔️' };
 const TEMPERAMENT_ICONS: Record<string, string> = {
-  BROODING: '😔',
+  BROODING: '🤔',
   CHARMING: '😊',
   RESERVED: '😶',
   AMIABLE: '🙂',

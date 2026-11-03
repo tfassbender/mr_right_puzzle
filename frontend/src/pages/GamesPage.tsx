@@ -2,7 +2,9 @@ import { useEffect, useState } from 'preact/hooks';
 import { ApiError } from '../api/client';
 import { deleteGame, listGames, type GameSummary } from '../api/gamesApi';
 import { session } from '../auth/session';
+import { AboutDialog } from '../components/AboutDialog';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { headerAction } from '../components/headerSlot';
 import { IntroDialog } from '../components/IntroDialog';
 import { errorText, getLocale, m } from '../i18n/i18n';
 import { deleteStoredGame, loadLocalState, loadStoredGameList, storeGameList } from '../storage/gameStorage';
@@ -49,6 +51,15 @@ export function GamesPage() {
   const [toDelete, setToDelete] = useState<GameSummary | null>(null);
   const [offline, setOffline] = useState(false);
   const [introOpen, setIntroOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+
+  // The About button sits in the header, but only on the game list (the main menu).
+  useEffect(() => {
+    headerAction.value = <AboutButton onClick={() => setAboutOpen(true)} />;
+    return () => {
+      headerAction.value = null;
+    };
+  }, []);
 
   useEffect(() => {
     fetchGames().then(
@@ -103,6 +114,7 @@ export function GamesPage() {
         {games?.map((game) => <GameItem key={game.id} game={game} onDelete={() => setToDelete(game)} />)}
       </ul>
       {introOpen && <IntroDialog onClose={() => setIntroOpen(false)} />}
+      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
       {toDelete && (
         <ConfirmDialog
           title={m.games_delete_title()}
@@ -114,6 +126,18 @@ export function GamesPage() {
         </ConfirmDialog>
       )}
     </div>
+  );
+}
+
+function AboutButton({ onClick }: { onClick: () => void }) {
+  const label = m.about_open();
+  return (
+    <button type="button" class="header-button" title={label} aria-label={label} onClick={onClick}>
+      <span aria-hidden="true">ⓘ</span>
+      <span class="wide-only" aria-hidden="true">
+        {label}
+      </span>
+    </button>
   );
 }
 

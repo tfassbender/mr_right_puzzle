@@ -186,5 +186,12 @@
   "intro_rule_tiebreak": "With more than one finalist, a final rule – revealed after a correct check – decides which of them is Mr Right.",
   "intro_rule_pick": "Pick Mr Right among the finalists. A wrong pick counts as a wrong guess, but you cannot lose – just try again.",
   "intro_rule_letters": "Vowels are A, E, I, O and U. Y counts as a consonant.",
-  "intro_rule_saving": "Your progress is saved automatically and also works offline. Continue on any device with your account."
+  "intro_rule_saving": "Your progress is saved automatically and also works offline. Continue on any device with your account.",
+  "about_open": "About",
+  "about_title": "About",
+  "about_version": "Version {version}",
+  "about_description": "A logic elimination puzzle: find the one Mr Right among hundreds of bachelors by crossing out everyone who doesn't match the lady's wishes.",
+  "about_author": "Author:",
+  "about_source": "Source code on GitHub",
+  "about_copyright": "© {year} {author}"
 }
