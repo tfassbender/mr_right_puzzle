@@ -1,7 +1,7 @@
 # Personal Rule Set – Planning
 
 Planning for the personal rule set (Phase 8c/8d in [implementation_plan.md](implementation_plan.md)).
-**Status:** the attributes are decided (values and icons may still be polished). Open points are marked **Q**.
+**Status:** implemented (Phase 8c) – values, icons and texts may still be polished. Open points are marked **Q**.
 Rule set id `EVA`, shown as **"Eva's rules"** / **"Evas Regeln"**.
 
 ## The criteria (as given)
@@ -49,12 +49,12 @@ Rule set id `EVA`, shown as **"Eva's rules"** / **"Evas Regeln"**.
 | 4  | Vehicle (`VEHICLE`)     | car 🚗, motorbike 🏍️, bike 🚲, bus 🚌                                                          | car                                   | 5      |
 | 5  | Character (`CHARACTER`) | faces like the book's temperament: loyal 🥰, flirty 😏, moody 😤, aloof 🥶                       | loyal                                 | 13     |
 | 6  | Manner (`MANNER`)       | open & funny 😄, shy 🙈, arrogant 🦚, boring 😑                                                 | open & funny                          | 3, 11  |
-| 7  | Social (`SOCIAL`)       | friends & family 👨‍👩‍👦, only friends 🍻, only family 🏠, loner 🐺                              | friends & family                      | 7, 8   |
+| 7  | Social (`SOCIAL`)       | friends & family 👨‍👩‍👦, only friends 🎉, only family 🏠, loner 🐺                              | friends & family                      | 7, 8   |
 | 8  | Food (`FOOD`)           | healthy foodie 🥗, fast food 🍔, diet fanatic (never eats out) 🥦, can't be bothered 🥫         | healthy foodie                        | 9, 10  |
 | 9  | Leisure (`LEISURE`)     | spontaneous short trips 🎒, luxury hotels 🏨, long-haul travel ✈️, homebody 🛋️                 | spontaneous short trips               | 4, 12  |
 | 10 | Fitness (`FITNESS`)     | athletic 💪, fit 🏃, average 🚶, couch potato 🥔                                               | athletic or fit                       | 14     |
-| 11 | Kids (`KIDS`)           | no kids 🚫, wants kids 👶, undecided 🤷                                                         | no kids                               | 15     |
-| 12 | Vices (`VICES`)         | none ✨, a little alcohol 🍺, a lot of alcohol 🍺🍺, cigarettes 🚬, drugs 💊                     | none or a little alcohol              | 16     |
+| 11 | Kids (`KIDS`)           | no kids 🧑🏻‍🤝‍🧑🏻, wants kids 👶, undecided 🤷                                                         | no kids                               | 15     |
+| 12 | Vices (`VICES`)         | none ✨, a little alcohol 🍺, a lot of alcohol 🍻, cigarettes 🚬, drugs 💊                     | none or a little alcohol              | 16     |
 
 Merges, so the criteria fit into 12 attributes:
 
@@ -96,7 +96,8 @@ The values and icons are a first pick and can be improved later.
 - **Tie-break constraint:** the generator picks Mr Right's name among the names with at least 9 consonants.
 - **Clue texts per criterion:** the book renders clues from generic templates; her clues get their own texts
   (en + de), e.g. "He drives a car – no more waiting for the bus."
-- **Two-line icon rows** for her rule set; the directory's row height depends on the rule set.
+- **Two-line icon rows** for her rule set, laid out as a grid so every attribute keeps its column; the
+  directory's row height depends on the rule set.
 - Number of suitors and finalists stay configurable.
 
 ## Still open

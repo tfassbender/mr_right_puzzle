@@ -168,16 +168,20 @@ rule set in 8c, once her rule is known.
 **Status:** the book is named "Classic" / "Klassisch". With only the book in the code, the unlocked path
 (dropdown shown, game created with another rule set) can't be tested yet – it gets tests with her rule set in 8c.
 
-### 8c – The personal rule set
+### 8c – The personal rule set ("Eva's rules")
 
 **Exit criteria:** she can create and solve a puzzle with her criteria on a phone.
 
-- [ ] Attributes, values and icons (en + de)
-- [ ] The fixed clues and their texts; the generator works with fixed clues (finalists and near misses
+- [x] Attributes, values and icons (en + de) – 12 attributes, see [personal-rule-set.md](personal-rule-set.md)
+- [x] The fixed clues and their texts; the generator works with fixed clues (finalists and near misses
       possible for every clue – checked by a test, since the parameters can't be re-rolled)
-- [ ] Tie-break rule
-- [ ] Rule-set-specific intro ("Story & rules")
-- [ ] Generator tests over many seeds, e2e: create and solve
+- [x] Tie-break rule: fewest consonants, Mr Right has at least 9
+- [ ] Rule-set-specific intro ("Story & rules") – text to be written
+- [x] Generator tests over many seeds, e2e: unlock, create and solve
+
+**Status:** new clue types `ATTRIBUTE_IS` and `ATTRIBUTE_BETWEEN`, weighted attribute values (80 % right per
+attribute – a suitor fails ~2.5 criteria on average), and a two-line icon grid for her directory rows.
+The book's puzzles are unchanged (`BookGoldenTest`).
 
 ### 8d – The finale
 

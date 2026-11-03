@@ -78,10 +78,12 @@ interface RuleSet {
     val id: String                               // "BOOK", stored with every game
     val generatorVersion: Int                    // per rule set, stored with every game
     val attributes: List<AttributeDefinition>    // in the order of the random draws
+    val minSolutionConsonants: Int               // default 0; Eva's rules: 9
     fun clues(random: Random, finalistCount: Int): ClueSet
 }
 
-data class AttributeDefinition(val id: String, val values: List<String>)   // values in legend order
+// values in legend order; weights (one per value) make values more common among random suitors – null = even
+data class AttributeDefinition(val id: String, val values: List<String>, val weights: List<Double>? = null)
 
 data class Suitor(
     val id: Int,                          // position in the directory, 0-based
@@ -106,6 +108,10 @@ only `Income` is still an enum, because `IncomeAtLeast` compares the levels. The
 (element, eyes, hair, temperament, interest, income) is the order of the random draws and part of the generator –
 the icon row order (income first) is defined in the frontend (`src/game/ruleSets.ts`).
 
+**Eva's rules** (`EvaRuleSet`, id `EVA`, see [personal-rule-set.md](personal-rule-set.md)): 12 attributes with
+weighted values, 12 fixed clues and no name clues. Height and birth year are number attributes (one value per cm /
+year); the frontend shows the birth year as an age of the current year, so a puzzle doesn't change over time.
+
 Name-derived properties (initials, vowel and consonant counts) are computed, not stored.
 Vowels are a, e, i, o, u; y is a consonant. Names contain only the letters A–Z.
 
@@ -122,6 +128,8 @@ sealed interface AttributeClue : Clue { val attribute: String; fun allows(value:
 data class IncomeAtLeast(val level: Income) : AttributeClue                          // book only; AT_LEAST_2K or _4K
 data class AttributeIsNot(val attribute: String, val value: String) : AttributeClue  // exactly one value
 data class AttributeIsOneOf(val attribute: String, val values: Set<String>) : AttributeClue   // 2 or 3 values
+data class AttributeIs(val attribute: String, val value: String) : AttributeClue     // exactly one value
+data class AttributeBetween(val attribute: String, val min: Int, val max: Int) : AttributeClue   // number range
 
 // name clues
 data object InitialsDiffer : Clue                                       // first name and surname initial differ
