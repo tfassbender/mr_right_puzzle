@@ -79,6 +79,7 @@ interface RuleSet {
     val generatorVersion: Int                    // per rule set, stored with every game
     val attributes: List<AttributeDefinition>    // in the order of the random draws
     val minSolutionConsonants: Int               // default 0; Eva's rules: 9
+    val finale: Finale?                          // default null; Eva's rules: one more suitor after the pick
     fun clues(random: Random, finalistCount: Int): ClueSet
 }
 
@@ -275,7 +276,7 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 | POST   | `/auth/register`, `/auth/login`, … | Auth flows (as in the reference project)         |
 | GET    | `/games`                   | List own games with a progress summary                   |
 | POST   | `/games`                   | Create a game `{ suitorCount, finalistCount, seed?, name?, ruleSet? }` |
-| GET    | `/games/{id}`              | Puzzle (suitors, clues, `finalistCount`, hashes) + state |
+| GET    | `/games/{id}`              | Puzzle (suitors, clues, `finalistCount`, hashes, `finale`) + state |
 | GET    | `/games/{id}/state`        | Only the state (cheap refresh on open / tab return)      |
 | PUT    | `/games/{id}/state`        | Save state `{ baseVersion, state }` → new version or 409 |
 | DELETE | `/games/{id}`              | Delete a game                                            |

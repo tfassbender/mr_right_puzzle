@@ -183,14 +183,17 @@ rule set in 8c, once her rule is known.
 attribute – a suitor fails ~2.5 criteria on average), and a two-line icon grid for her directory rows.
 The book's puzzles are unchanged (`BookGoldenTest`).
 
-### 8d – The finale
+### 8d – The finale ✅
 
 **Exit criteria:** after the correct pick, the extra suitor appears and wins.
 
-- [ ] The extra suitor as part of the rule set (name + attributes); a test checks he matches all clues and wins
+- [x] The extra suitor as part of the rule set (name + attributes); a test checks he matches all clues and wins
       the final tie-break against every possible Mr Right
-- [ ] Finale dialog after the correct pick; can be opened again from the solved game
-- [ ] Texts en + de, e2e test
+- [x] Finale dialog after the correct pick; can be opened again from the solved game
+- [x] Texts en + de, e2e test
+
+**Status:** the tie-break is "who treats her better" (Tobias 10, Mr Right 5–8 per game). The closing text is a draft.
+Puzzles stored on a device before the finale existed are fetched once more when opened.
 
 ## Later (optional)
 

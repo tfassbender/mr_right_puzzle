@@ -74,12 +74,30 @@ The values and icons are a first pick and can be improved later.
 
 - **Tie-break between the finalists:** fewest consonants in the full name, like the book.
 - **Mr Right has at least 9 consonants** – as many as "Tobias Faßbender" (T, b, s + F, ß, b, n, d, r = 9).
-  So in the finale Tobias never loses on consonants: he has fewer, or the same.
-- **Finale:** after the correct pick, one more suitor arrives: **Tobias Faßbender**, born 1995, 1.88 m, matching
-  every criterion. He is not in the directory. **Q2:** the final tie-breaker against Mr Right (used at least when
-  both have 9 consonants – maybe "sticks to the rules"). Tobias must win it against every possible Mr Right.
-- **Q3:** Tobias's values for the other attributes (he matches all criteria; e.g. income €, €€ or €€€?).
+  Decided before the finale dropped the consonant comparison; kept, it does no harm.
+- **Finale:** after the correct pick, one more suitor arrives: **Tobias Faßbender**. He is not in the directory.
+  His values match every criterion:
 
+  | Height | Born | Job | Vehicle | Kids    | Vices            | Character | Manner       | Social           | Food           | Leisure                 | Fitness |
+  |--------|------|-----|---------|---------|------------------|-----------|--------------|------------------|----------------|-------------------------|---------|
+  | 1.88 m | 1995 | €€  | car     | no kids | a little alcohol | loyal     | open & funny | friends & family | healthy foodie | spontaneous short trips | fit     |
+
+- **The only tie-breaker in the finale: who treats her better**, shown as a progress bar from 1 to 10.
+  Tobias has 10, Mr Right a value between 5 and 8 (fixed per game, derived from its seed). No consonant comparison.
+
+### Finale flow (implemented)
+
+1. The player picks Mr Right correctly → "Congratulations" as today, and the finale dialog opens:
+   "One more suitor" – Eva is about to choose when one last gentleman arrives who meets all her wishes too.
+2. Mr Right's and Tobias's entries (name + icons), each with a "how well he treats her" bar (5–8 vs 10)
+   and a "Choose him" button – the last tie-break is her own choice.
+3. Choosing Mr Right only shows a playful hint ("Are you sure? Have another look …"); it is not a wrong guess
+   and she can choose again.
+4. Choosing Tobias shows the result: Tobias is Eva's Mr Right, with a closing text (a draft – to be improved).
+   The choice isn't saved – reopening the finale starts at the choice again.
+
+The finale opens again from the solved game ("Wait – one more suitor has just arrived …"). Texts in en + de.
+The finale shows the names without small caps – they would turn the ß in "Faßbender" into something like a B.
 ## What is new for the code
 
 - **Clue types:**
@@ -102,6 +120,4 @@ The values and icons are a first pick and can be improved later.
 
 ## Still open
 
-- **Q2** – The final tie-breaker between Mr Right and Tobias.
-- **Q3** – Tobias's values for all attributes.
 - **Q4** – Intro text (story & rules) – later, as planned.
