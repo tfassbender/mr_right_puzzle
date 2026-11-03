@@ -17,9 +17,14 @@ export interface GameSession {
  */
 export async function openGameSession(gameId: string): Promise<GameSession> {
   let game = await loadStoredGame(gameId);
-  if (!game) {
-    game = await loadGame(gameId);
-    await storeGame(game);
+  if (!game || game.finale === undefined) {
+    // Copies stored before the finale existed lack it: fetch once more, but offline the old copy still plays.
+    try {
+      game = await loadGame(gameId);
+      await storeGame(game);
+    } catch (e) {
+      if (!game) throw e;
+    }
   }
   const stored = await loadLocalState(gameId);
   const local = stored

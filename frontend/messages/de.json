@@ -265,5 +265,16 @@
   "clue_EVA_CHARACTER": "Er ist treu.",
   "clue_EVA_FITNESS": "Er sieht gut aus und ist sportlich: athletisch oder zumindest fit.",
   "clue_EVA_KIDS": "Er möchte keine Kinder.",
-  "clue_EVA_VICES": "Keine Zigaretten, keine Drogen – ein Bier ab und zu ist in Ordnung."
+  "clue_EVA_VICES": "Keine Zigaretten, keine Drogen – ein Bier ab und zu ist in Ordnung.",
+  "finale_open": "Moment – gerade ist noch ein Verehrer eingetroffen …",
+  "finale_title": "Noch ein Verehrer",
+  "finale_intro": "Gerade als Eva ihre Wahl treffen will, öffnet sich noch einmal die Tür: Ein letzter Herr bittet darum, berücksichtigt zu werden. Auch er erfüllt jeden einzelnen ihrer Wünsche.",
+  "finale_tiebreak": "Zwei Männer, die all ihre Wünsche erfüllen – den allerletzten Stichentscheid trifft Eva selbst: Wer behandelt sie besser?",
+  "finale_rating": "Wie gut er sie behandelt",
+  "finale_rating_value": "{value} / 10",
+  "finale_result_title": "Evas Mr Right",
+  "finale_result": "Mr {name} gewinnt. Er war die ganze Zeit an ihrer Seite – und er hat vor, dort zu bleiben. ❤️",
+  "finale_close": "Schließen",
+  "finale_choose": "Ihn wählen",
+  "finale_wrong_choice": "Bist du sicher? Schau dir noch einmal an, wie gut er sie behandelt …"
 }

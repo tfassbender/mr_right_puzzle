@@ -428,6 +428,61 @@ select {
   font-size: 0.8rem;
 }
 
+/* --- Finale (Eva's rules) ---------------------------------------------------------------------- */
+
+.finale-suitors {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 var(--space);
+  padding: 0;
+  list-style: none;
+}
+
+.finale-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* Small caps turn the ß in "Faßbender" into something like a B, so the finale shows the names as they are. */
+.finale-entry .suitor-name {
+  font-variant: normal;
+  font-weight: bold;
+}
+
+.finale-entry.chosen {
+  border: 2px solid var(--color-primary);
+  background: #fdf3d8;
+}
+
+.finale-choose {
+  align-self: flex-end;
+  margin-top: 8px;
+}
+
+.finale-rating-label {
+  margin-top: 4px;
+  font-size: 0.9rem;
+}
+
+.rating {
+  display: block;
+  height: 12px;
+  overflow: hidden;
+  background: var(--color-border);
+  border-radius: 6px;
+}
+
+.rating-bar {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+}
+
 /* --- Game view ---------------------------------------------------------------------------------- */
 
 /* The game page fills the screen below the header; only the directory scrolls. */

@@ -265,5 +265,16 @@
   "clue_EVA_CHARACTER": "He is loyal.",
   "clue_EVA_FITNESS": "He is good-looking and sporty: athletic or at least fit.",
   "clue_EVA_KIDS": "He doesn't want children.",
-  "clue_EVA_VICES": "No cigarettes, no drugs – a beer now and then is fine."
+  "clue_EVA_VICES": "No cigarettes, no drugs – a beer now and then is fine.",
+  "finale_open": "Wait – one more suitor has just arrived …",
+  "finale_title": "One more suitor",
+  "finale_intro": "Just as Eva is about to make her choice, the door opens once more: one last gentleman asks to be considered. He, too, meets every single one of her wishes.",
+  "finale_tiebreak": "Two men who fulfil all her wishes – so the very last tie-break is up to Eva herself: who treats her better?",
+  "finale_rating": "How well he treats her",
+  "finale_rating_value": "{value} / 10",
+  "finale_result_title": "Eva's Mr Right",
+  "finale_result": "Mr {name} wins. He has been at her side all along – and he means to stay there. ❤️",
+  "finale_close": "Close",
+  "finale_choose": "Choose him",
+  "finale_wrong_choice": "Are you sure? Have another look at how well he treats her …"
 }

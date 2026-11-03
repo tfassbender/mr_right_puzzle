@@ -64,6 +64,13 @@ export interface GameSummary {
   updatedAt: string;
 }
 
+/** Eva's rules: the suitor who arrives after Mr Right is found, and both ratings for "who treats her better". */
+export interface Finale {
+  suitor: Suitor; // not in the directory (id -1)
+  suitorRating: number;
+  mrRightRating: number;
+}
+
 export interface GameDto {
   id: string;
   name: string | null;
@@ -78,6 +85,7 @@ export interface GameDto {
   finalistsHash: string;
   solutionHash: string;
   state: GameStateDto;
+  finale?: Finale | null; // missing in games stored on the device before the finale existed
 }
 
 export interface NewGame {

@@ -66,6 +66,27 @@ class RuleSetE2eTest extends E2eBase {
                 () -> pick(page, puzzle.getSuitors().get(puzzle.getSolutionId())));
         assertThat(page.getByText("Congratulations!")).isVisible();
 
+        // The finale follows the correct pick: one more suitor, who treats her better.
+        Locator finale = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("One more suitor"));
+        assertThat(finale.getByTestId("finale-entry")).hasCount(2);
+        assertThat(finale.getByTestId("finale-entry").last()).containsText("Mr Tobias Faßbender");
+        assertThat(finale.getByTestId("finale-entry").last()).containsText("10 / 10");
+        // She makes the last choice herself: Mr Right only earns a hint, Tobias ends the game.
+        Locator choose = finale.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Choose him"));
+        choose.first().click();
+        assertThat(finale.getByRole(AriaRole.ALERT)).containsText("Are you sure?");
+        assertThat(finale.getByText("Eva's Mr Right")).isHidden();
+        choose.last().click();
+        assertThat(finale.getByText("Eva's Mr Right")).isVisible();
+        assertThat(choose).hasCount(0);
+        Locator close = finale.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Close"));
+        assertThat(close).isInViewport();
+        close.click();
+        assertThat(finale).isHidden();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Wait – one more suitor has just arrived …")).click();
+        assertThat(finale).isVisible();
+        finale.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Close")).click();
+
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("My puzzles").setExact(true)).first().click();
         assertThat(page.getByTestId("game-item")).containsText("Eva's rules · ");
     }
