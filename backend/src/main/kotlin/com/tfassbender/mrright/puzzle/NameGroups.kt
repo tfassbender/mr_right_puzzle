@@ -21,12 +21,22 @@ internal class NameGroups(private val clues: List<Clue>) {
     fun failingOnly(clueIndex: Int): List<FullName> = groups[1 shl clueIndex].orEmpty()
 
     /** Every group needed for finalists and near misses exists, and the finalists' tie-break can be unique. */
-    fun supports(finalistCount: Int): Boolean =
-        clues.indices.all { failingOnly(it).isNotEmpty() } && solutionCandidates(finalistCount).isNotEmpty()
+    fun supports(finalistCount: Int, minConsonants: Int = 0): Boolean =
+        clues.indices.all { failingOnly(it).isNotEmpty() } && solutionCandidates(finalistCount, minConsonants).isNotEmpty()
 
-    /** Names Mr Right can have: at least `finalistCount - 1` passing names have strictly more consonants. */
-    fun solutionCandidates(finalistCount: Int): List<FullName> =
-        passingAll.filter { candidate -> namesWithMoreConsonants(candidate).size >= finalistCount - 1 }
+    /**
+     * Names Mr Right can have: at least [minConsonants] consonants, and at least `finalistCount - 1` passing names
+     * with strictly more consonants.
+     */
+    fun solutionCandidates(finalistCount: Int, minConsonants: Int = 0): List<FullName> {
+        // Counted once per consonant count: without name clues all 14,400 names pass, and comparing every name
+        // with every other one would take seconds.
+        val counts = passingAll.map { it.consonantCount }
+        val namesWithMore = counts.distinct().associateWith { count -> counts.count { it > count } }
+        return passingAll.filter {
+            it.consonantCount >= minConsonants && namesWithMore.getValue(it.consonantCount) >= finalistCount - 1
+        }
+    }
 
     fun namesWithMoreConsonants(name: FullName): List<FullName> =
         passingAll.filter { it.consonantCount > name.consonantCount }

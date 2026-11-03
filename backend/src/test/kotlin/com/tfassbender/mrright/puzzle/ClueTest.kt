@@ -42,6 +42,18 @@ class ClueTest {
     }
 
     @Test
+    fun `attribute is and between check one value and a range`() {
+        val car = AttributeIs("VEHICLE", "CAR")
+        val tall = AttributeBetween("HEIGHT", 188, 195)
+
+        assertTrue(car.allows("CAR"))
+        assertFalse(car.allows("BIKE"))
+        assertTrue(tall.allows("188") && tall.allows("195"))
+        assertFalse(tall.allows("187") || tall.allows("196"))
+        assertThrows<IllegalArgumentException> { AttributeBetween("HEIGHT", 195, 188) }
+    }
+
+    @Test
     fun `initials differ`() {
         assertTrue(InitialsDiffer.matches(suitor(firstName = "Edward", lastName = "Ashby")))
         assertFalse(InitialsDiffer.matches(suitor(firstName = "Edward", lastName = "Elliot")))

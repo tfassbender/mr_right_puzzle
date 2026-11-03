@@ -15,6 +15,8 @@ class ClueJsonTest {
         IncomeAtLeast(Income.AT_LEAST_4K),
         AttributeIsNot(BookRuleSet.HAIR_COLOR, "BLOND"),
         AttributeIsOneOf(BookRuleSet.EYE_COLOR, setOf("GREEN", "BLUE")),
+        AttributeIs(EvaRuleSet.VEHICLE, "CAR"),
+        AttributeBetween(EvaRuleSet.HEIGHT, 188, 195),
         InitialsDiffer,
         InitialsInRange(LetterRange.A_TO_M),
         SurnameStartAndEndDiffer,
@@ -35,6 +37,10 @@ class ClueJsonTest {
         )
         assertEquals("""{"type":"NAME_EXCLUDES_LETTER","letter":"H"}""", mapper.writeValueAsString(NameExcludesLetter('H')))
         assertEquals("""{"type":"INITIALS_DIFFER"}""", mapper.writeValueAsString(InitialsDiffer))
+        assertEquals(
+            """{"type":"ATTRIBUTE_BETWEEN","attribute":"HEIGHT","min":188,"max":195}""",
+            mapper.writeValueAsString(AttributeBetween(EvaRuleSet.HEIGHT, 188, 195)),
+        )
     }
 
     @Test

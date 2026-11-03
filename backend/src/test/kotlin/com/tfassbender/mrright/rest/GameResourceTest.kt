@@ -1,10 +1,13 @@
 package com.tfassbender.mrright.rest
 
+import com.tfassbender.mrright.auth.UserId
+import com.tfassbender.mrright.auth.UserRepository
 import com.tfassbender.mrright.puzzle.BookRuleSet
 import com.tfassbender.mrright.puzzle.PuzzleConfig
 import com.tfassbender.mrright.puzzle.PuzzleGenerator
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
+import jakarta.inject.Inject
 import io.restassured.http.ContentType
 import io.restassured.specification.RequestSpecification
 import org.hamcrest.Matchers.equalTo
@@ -17,17 +20,23 @@ import java.util.UUID
 @QuarkusTest
 class GameResourceTest {
 
+    @Inject
+    lateinit var users: UserRepository
+
     private lateinit var token: String
+    private lateinit var userId: String
 
     @BeforeEach
     fun registerPlayer() {
         val name = "g" + UUID.randomUUID().toString().take(8)
-        token = given()
+        val response = given()
             .contentType(ContentType.JSON)
             .body(mapOf("email" to "$name@example.com", "displayName" to name, "password" to "secret-password"))
             .post("/api/auth/register")
             .then().statusCode(201)
-            .extract().path("token")
+            .extract()
+        token = response.path("token")
+        userId = response.path("userId")
     }
 
     private fun asPlayer(): RequestSpecification = given().auth().oauth2(token).contentType(ContentType.JSON)
@@ -85,6 +94,25 @@ class GameResourceTest {
         asPlayer().get("/api/games/$id/state").then().statusCode(200)
             .body("version", equalTo(1))
             .body("crossedOut", equalTo(listOf(2, 4)))
+    }
+
+    @Test
+    fun `an unlocked rule set is offered and can be played`() {
+        // There is no UI for unlocking – it is edited by hand in the user file, like here.
+        val user = users.findById(UserId(userId))!!
+        users.save(user.copy(unlockedRuleSets = setOf("EVA")))
+
+        asPlayer().get("/api/auth/me").then().statusCode(200).body("ruleSets", equalTo(listOf("BOOK", "EVA")))
+        val id: String = asPlayer()
+            .body(mapOf("suitorCount" to 100, "finalistCount" to 2, "ruleSet" to "EVA"))
+            .post("/api/games")
+            .then().statusCode(201)
+            .body("ruleSet", equalTo("EVA"))
+            .extract().path("id")
+        asPlayer().get("/api/games/$id").then().statusCode(200)
+            .body("ruleSet", equalTo("EVA"))
+            .body("suitors[0].attributes.HEIGHT", notNullValue())
+            .body("clues", hasSize<Any>(12))
     }
 
     @Test

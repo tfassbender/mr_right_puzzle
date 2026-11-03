@@ -12,12 +12,12 @@ object PuzzleGenerator {
     fun generate(ruleSet: RuleSet, seed: String, config: PuzzleConfig): Puzzle {
         val random = Seeds.toRandom(seed)
         val clueSet = ruleSet.clues(random, config.finalistCount)
-        check(clueSet.nameGroups.supports(config.finalistCount)) {
+        check(clueSet.nameGroups.supports(config.finalistCount, ruleSet.minSolutionConsonants)) {
             "The name clues of rule set ${ruleSet.id} don't support ${config.finalistCount} finalists"
         }
 
         val builder = DirectoryBuilder(random, ruleSet.attributes, clueSet)
-        builder.addFinalists(config.finalistCount)
+        builder.addFinalists(config.finalistCount, ruleSet.minSolutionConsonants)
         builder.addNearMisses(nearMissesPerClue(config.suitorCount))
         builder.fillWithRandomSuitors(config.suitorCount)
         val suitors = builder.shuffledWithIds()
@@ -46,8 +46,8 @@ private class DirectoryBuilder(
     private val nameGroups = clueSet.nameGroups
 
     /** Mr Right gets the fewest consonants, the other finalists strictly more – a unique tie-break. */
-    fun addFinalists(finalistCount: Int) {
-        val solutionName = nameGroups.solutionCandidates(finalistCount).random(random)
+    fun addFinalists(finalistCount: Int, minConsonants: Int) {
+        val solutionName = nameGroups.solutionCandidates(finalistCount, minConsonants).random(random)
         addUnique { finalist(solutionName) }
         val otherNames = nameGroups.namesWithMoreConsonants(solutionName)
         repeat(finalistCount - 1) {
@@ -95,7 +95,7 @@ private class DirectoryBuilder(
 
     private fun randomSuitor(): Suitor {
         val name = FullName(NameCatalog.firstNames.random(random), NameCatalog.surnames.random(random))
-        return suitorOf(name, attributes.associate { it.id to it.values.random(random) })
+        return suitorOf(name, attributes.associate { it.id to it.randomValue(random) })
     }
 
     private fun suitorOf(name: FullName, values: Map<String, String>): Suitor =

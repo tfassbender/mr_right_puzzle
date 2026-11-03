@@ -3,6 +3,7 @@ package com.tfassbender.mrright.puzzle
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class RuleSetTest {
 
@@ -14,6 +15,17 @@ class RuleSetTest {
         assertEquals(listOf(RuleSets.BOOK), RuleSets.availableFor(emptySet()).map { it.id })
         assertEquals(listOf(RuleSets.BOOK), RuleSets.availableFor(setOf("UNKNOWN")).map { it.id })
         assertEquals(BookRuleSet, RuleSets.byId(RuleSets.BOOK))
+        assertEquals(listOf(RuleSets.BOOK, "EVA"), RuleSets.availableFor(setOf("EVA")).map { it.id })
+    }
+
+    @Test
+    fun `weighted values follow their weights`() {
+        val weighted = AttributeDefinition("COIN", listOf("HEADS", "TAILS"), listOf(0.9, 0.1))
+        val random = Seeds.toRandom("weights")
+        val heads = (1..10_000).count { weighted.randomValue(random) == "HEADS" }
+
+        assertTrue(heads in 8_700..9_300, "heads: $heads")
+        assertThrows<IllegalArgumentException> { AttributeDefinition("COIN", listOf("HEADS", "TAILS"), listOf(1.0)) }
     }
 
     @Test

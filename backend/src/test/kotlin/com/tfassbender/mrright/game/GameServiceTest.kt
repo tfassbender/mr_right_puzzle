@@ -139,6 +139,15 @@ class GameServiceTest {
     }
 
     @Test
+    fun `an unlocked rule set can be played`() {
+        unlocked = setOf("EVA")
+        val game = service.create(emma, CreateGameCommand(100, 2, "eva", ruleSet = "EVA"))
+
+        assertEquals("EVA", game.ruleSet)
+        assertEquals(12, service.load(emma, game.id).puzzle.clues.size)
+    }
+
+    @Test
     fun `games of a removed rule set are outdated`() {
         val game = createGame().copy(ruleSet = "REMOVED")
         repository.save(game)

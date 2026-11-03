@@ -18,6 +18,9 @@ interface RuleSet {
      */
     val attributes: List<AttributeDefinition>
 
+    /** The fewest consonants Mr Right's name may have – the tie-break is still "fewest consonants wins". */
+    val minSolutionConsonants: Int get() = 0
+
     /** The clues of one puzzle, drawn from [random] (or fixed). They must support [finalistCount] finalists. */
     fun clues(random: Random, finalistCount: Int): ClueSet
 }
@@ -26,7 +29,7 @@ interface RuleSet {
 object RuleSets {
     const val BOOK: String = "BOOK"
 
-    val all: List<RuleSet> = listOf(BookRuleSet)
+    val all: List<RuleSet> = listOf(BookRuleSet, EvaRuleSet)
 
     fun byId(id: String): RuleSet? = all.find { it.id == id }
 

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 /**
- * One of Emma's criteria: a predicate every finalist fulfils. Clues are language-neutral – the JSON carries
+ * One of the lady's criteria: a predicate every finalist fulfils. Clues are language-neutral – the JSON carries
  * a `type` plus parameters, the frontend renders the text.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(IncomeAtLeast::class, name = "INCOME_AT_LEAST"),
     JsonSubTypes.Type(AttributeIsNot::class, name = "ATTRIBUTE_IS_NOT"),
     JsonSubTypes.Type(AttributeIsOneOf::class, name = "ATTRIBUTE_IS_ONE_OF"),
+    JsonSubTypes.Type(AttributeIs::class, name = "ATTRIBUTE_IS"),
+    JsonSubTypes.Type(AttributeBetween::class, name = "ATTRIBUTE_BETWEEN"),
     JsonSubTypes.Type(InitialsDiffer::class, name = "INITIALS_DIFFER"),
     JsonSubTypes.Type(InitialsInRange::class, name = "INITIALS_IN_RANGE"),
     JsonSubTypes.Type(SurnameStartAndEndDiffer::class, name = "SURNAME_START_AND_END_DIFFER"),
@@ -63,6 +65,24 @@ data class AttributeIsOneOf(override val attribute: String, val values: Set<Stri
     override fun allows(value: String): Boolean = value in values
 
     override fun referencedValues(): Set<String> = values
+}
+
+/** Exactly one value – for fixed criteria like "he has a car". */
+data class AttributeIs(override val attribute: String, val value: String) : AttributeClue {
+    override fun allows(value: String): Boolean = value == this.value
+
+    override fun referencedValues(): Set<String> = setOf(value)
+}
+
+/** A range on a number attribute (both ends included), e.g. a height between 188 and 195 cm. */
+data class AttributeBetween(override val attribute: String, val min: Int, val max: Int) : AttributeClue {
+    init {
+        require(min <= max) { "min must not be greater than max: $min > $max" }
+    }
+
+    override fun allows(value: String): Boolean = value.toInt() in min..max
+
+    override fun referencedValues(): Set<String> = setOf(min.toString(), max.toString())
 }
 
 data object InitialsDiffer : Clue {
