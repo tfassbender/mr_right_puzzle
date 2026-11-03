@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useLocation } from 'preact-iso';
 import { createGame, FINALIST_COUNT_MAX, listGames, SUITOR_COUNT_MAX, SUITOR_COUNT_MIN } from '../api/gamesApi';
+import { session } from '../auth/session';
 import { Form } from '../components/Form';
 import { defaultGameName, GAME_NAME_MAX_LENGTH } from '../game/gameName';
 import { randomSeed } from '../game/randomSeed';
+import { BOOK, ruleSetName } from '../game/ruleSets';
 import { formatNumber, getLocale, m } from '../i18n/i18n';
 
 const SUITOR_PRESETS = [100, 500, 1000, 6400];
@@ -24,6 +26,9 @@ function useSuggestedName(): string {
 
 export function NewGamePage() {
   const { route } = useLocation();
+  // Only unlocked rule sets are offered; with just the book there is nothing to choose, so no dropdown.
+  const ruleSets = session.value?.user.ruleSets ?? [BOOK];
+  const [ruleSet, setRuleSet] = useState(BOOK);
   const [suitorCount, setSuitorCount] = useState(500);
   const [finalistCount, setFinalistCount] = useState(2);
   const [advanced, setAdvanced] = useState(false);
@@ -35,7 +40,7 @@ export function NewGamePage() {
     // Without the advanced options the server picks a random seed and the game gets the suggested name.
     const chosenSeed = advanced ? seed.trim() || undefined : undefined;
     const chosenName = (advanced && name.trim()) || suggestedName;
-    const game = await createGame({ suitorCount, finalistCount, seed: chosenSeed, name: chosenName });
+    const game = await createGame({ suitorCount, finalistCount, seed: chosenSeed, name: chosenName, ruleSet });
     route(`/games/${game.id}`);
   };
 
@@ -47,6 +52,18 @@ export function NewGamePage() {
 
   return (
     <Form title={m.new_game_title()} submitLabel={m.new_game_submit()} onSubmit={submit}>
+      {ruleSets.length > 1 && (
+        <div class="field">
+          <label for="ruleSet">{m.new_game_rule_set()}</label>
+          <select id="ruleSet" name="ruleSet" value={ruleSet} onChange={(e) => setRuleSet(e.currentTarget.value)}>
+            {ruleSets.map((id) => (
+              <option key={id} value={id}>
+                {ruleSetName(id)}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div class="field">
         <label for="suitorCount">{m.new_game_suitors()}</label>
         <input

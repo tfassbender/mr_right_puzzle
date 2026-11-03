@@ -3,6 +3,7 @@ package com.tfassbender.mrright.e2e;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.tfassbender.mrright.puzzle.BookRuleSet;
 import com.tfassbender.mrright.puzzle.Puzzle;
 import com.tfassbender.mrright.puzzle.PuzzleConfig;
 import com.tfassbender.mrright.puzzle.PuzzleGenerator;
@@ -31,7 +32,7 @@ class GameE2eTest extends E2eBase {
         Page page = newPage(viewport);
         registerAndLogIn(page);
         String seed = "e2e-" + UUID.randomUUID();
-        Puzzle puzzle = PuzzleGenerator.INSTANCE.generate(seed, new PuzzleConfig(SUITORS, FINALISTS));
+        Puzzle puzzle = PuzzleGenerator.INSTANCE.generate(BookRuleSet.INSTANCE, seed, new PuzzleConfig(SUITORS, FINALISTS));
 
         createGame(page, seed, SUITORS, FINALISTS);
         assertThat(page.getByTestId("remaining")).hasText("100 of 100 left");

@@ -3,30 +3,20 @@ import { apiRequest } from './client';
 // DTO types mirroring backend/src/main/kotlin/com/tfassbender/mrright/rest/GameDtos.kt
 
 export type Income = 'AT_LEAST_1K' | 'AT_LEAST_2K' | 'AT_LEAST_4K' | 'AT_LEAST_10K';
-export type Element = 'AIR' | 'FIRE' | 'WATER' | 'EARTH';
-export type EyeColor = 'BROWN' | 'BROWN_GREEN' | 'AMBER' | 'GREEN' | 'BLUE';
-export type HairColor = 'BLOND' | 'BROWN' | 'BLACK' | 'AUBURN';
-export type Temperament = 'BROODING' | 'CHARMING' | 'RESERVED' | 'AMIABLE' | 'DASHING';
-export type Interest = 'INTELLECTUAL' | 'MUSICAL' | 'SPORTY' | 'SOCIABLE';
-export type Attribute = 'ELEMENT' | 'EYE_COLOR' | 'HAIR_COLOR' | 'TEMPERAMENT' | 'INTEREST';
 
+/** [attributes] maps every attribute id of the game's rule set to the suitor's value, e.g. EYE_COLOR → GREEN. */
 export interface Suitor {
   id: number;
   firstName: string;
   lastName: string;
-  income: Income;
-  element: Element;
-  eyeColor: EyeColor;
-  hairColor: HairColor;
-  temperament: Temperament;
-  interest: Interest;
+  attributes: Record<string, string>;
 }
 
 /** Language-neutral clues: a type plus parameters, the texts are rendered from the messages. */
 export type Clue =
   | { type: 'INCOME_AT_LEAST'; level: Income }
-  | { type: 'ATTRIBUTE_IS_NOT'; attribute: Attribute; value: string }
-  | { type: 'ATTRIBUTE_IS_ONE_OF'; attribute: Attribute; values: string[] }
+  | { type: 'ATTRIBUTE_IS_NOT'; attribute: string; value: string }
+  | { type: 'ATTRIBUTE_IS_ONE_OF'; attribute: string; values: string[] }
   | { type: 'INITIALS_DIFFER' }
   | { type: 'INITIALS_IN_RANGE'; range: 'A_TO_M' | 'N_TO_Z' }
   | { type: 'SURNAME_START_AND_END_DIFFER' }
@@ -59,6 +49,7 @@ export interface StateUpdateDto {
 export interface GameSummary {
   id: string;
   name: string | null; // null for games created before names existed
+  ruleSet: string;
   seed: string;
   suitorCount: number;
   finalistCount: number;
@@ -74,6 +65,7 @@ export interface GameSummary {
 export interface GameDto {
   id: string;
   name: string | null;
+  ruleSet: string;
   seed: string;
   suitorCount: number;
   finalistCount: number;
@@ -91,6 +83,7 @@ export interface NewGame {
   finalistCount: number;
   seed?: string;
   name?: string;
+  ruleSet?: string; // default: the book
 }
 
 export const SUITOR_COUNT_MIN = 100;

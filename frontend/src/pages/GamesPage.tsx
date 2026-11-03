@@ -6,6 +6,7 @@ import { AboutDialog } from '../components/AboutDialog';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { headerAction } from '../components/headerSlot';
 import { IntroDialog } from '../components/IntroDialog';
+import { BOOK, ruleSetName } from '../game/ruleSets';
 import { errorText, getLocale, m } from '../i18n/i18n';
 import { deleteStoredGame, loadLocalState, loadStoredGameList, storeGameList } from '../storage/gameStorage';
 
@@ -152,6 +153,8 @@ function GameItem({ game, onDelete }: { game: GameSummary; onDelete: () => void 
     <>
       <strong>{gameTitle(game)}</strong>
       <span class="muted">
+        {/* Lists stored offline before rule sets existed have no rule set – those are book games. */}
+        {game.ruleSet && game.ruleSet !== BOOK && `${ruleSetName(game.ruleSet)} · `}
         {m.games_size({ suitors: game.suitorCount, finalists: game.finalistCount })}
       </span>
     </>

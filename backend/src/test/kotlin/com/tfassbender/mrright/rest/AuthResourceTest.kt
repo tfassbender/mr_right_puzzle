@@ -35,6 +35,7 @@ class AuthResourceTest {
             .statusCode(200)
             .body("displayName", equalTo(name))
             .body("email", equalTo("$name@example.com"))
+            .body("ruleSets", equalTo(listOf("BOOK")))
     }
 
     @Test

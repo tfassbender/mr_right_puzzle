@@ -193,5 +193,8 @@
   "about_description": "Ein logisches Ausschluss-Rätsel: Finde den einen Mr Right unter Hunderten Junggesellen, indem du jeden streichst, der nicht zu den Wünschen der Dame passt.",
   "about_author": "Autor:",
   "about_source": "Quellcode auf GitHub",
-  "about_copyright": "© {year} {author}"
+  "about_copyright": "© {year} {author}",
+  "new_game_rule_set": "Regelwerk",
+  "rule_set_BOOK": "Klassisch",
+  "error_RULE_SET_LOCKED": "Dieses Regelwerk ist für dein Konto nicht freigeschaltet."
 }

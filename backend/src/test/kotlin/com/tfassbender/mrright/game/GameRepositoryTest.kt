@@ -2,6 +2,7 @@ package com.tfassbender.mrright.game
 
 import com.tfassbender.mrright.auth.UserId
 import com.tfassbender.mrright.puzzle.PuzzleConfig
+import com.tfassbender.mrright.puzzle.RuleSets
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
@@ -23,6 +24,18 @@ class GameRepositoryTest {
     private fun game(owner: UserId, createdAt: String = "2026-10-20T10:00:00Z"): Game {
         val created = Instant.parse(createdAt)
         return Game(UUID.randomUUID(), owner, "seed", PuzzleConfig(100, 2), 1, created, GameState.initial(created))
+    }
+
+    @Test
+    fun `games saved before rule sets existed are book games`() {
+        val repository = GameRepository(dataDir)
+        val game = game(emma)
+        repository.save(game)
+        val file = dataDir.resolve("games/${game.id}.json")
+        Files.writeString(file, Files.readString(file).replace(Regex(""",?\s*"ruleSet"\s*:\s*"BOOK""""), ""))
+        check(!Files.readString(file).contains("ruleSet"))
+
+        assertEquals(RuleSets.BOOK, GameRepository(dataDir).findById(game.id)?.ruleSet)
     }
 
     @Test

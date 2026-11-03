@@ -3,6 +3,7 @@ package com.tfassbender.mrright.game
 import com.tfassbender.mrright.puzzle.Puzzle
 import com.tfassbender.mrright.puzzle.PuzzleConfig
 import com.tfassbender.mrright.puzzle.PuzzleGenerator
+import com.tfassbender.mrright.puzzle.RuleSets
 import com.tfassbender.mrright.storage.DataDirectory
 import io.quarkus.cache.CacheResult
 import jakarta.enterprise.context.ApplicationScoped
@@ -22,5 +23,6 @@ class GameProducers {
 class PuzzleCache {
 
     @CacheResult(cacheName = "puzzles")
-    fun puzzle(seed: String, config: PuzzleConfig): Puzzle = PuzzleGenerator.generate(seed, config)
+    fun puzzle(ruleSetId: String, seed: String, config: PuzzleConfig): Puzzle =
+        PuzzleGenerator.generate(RuleSets.byId(ruleSetId) ?: error("Unknown rule set $ruleSetId"), seed, config)
 }

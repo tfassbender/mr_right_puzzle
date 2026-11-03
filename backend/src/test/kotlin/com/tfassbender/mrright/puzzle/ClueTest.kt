@@ -18,29 +18,27 @@ class ClueTest {
 
     @Test
     fun `attribute is not excludes exactly one value`() {
-        val clue = AttributeIsNot(Attribute.HAIR_COLOR, "BLOND")
+        val clue = AttributeIsNot(BookRuleSet.HAIR_COLOR, "BLOND")
 
-        assertFalse(clue.matches(suitor(hairColor = HairColor.BLOND)))
-        assertTrue(clue.matches(suitor(hairColor = HairColor.AUBURN)))
+        assertFalse(clue.matches(suitor(hairColor = "BLOND")))
+        assertTrue(clue.matches(suitor(hairColor = "AUBURN")))
     }
 
     @Test
     fun `attribute is one of allows the listed values only`() {
-        val clue = AttributeIsOneOf(Attribute.EYE_COLOR, setOf("GREEN", "BLUE"))
+        val clue = AttributeIsOneOf(BookRuleSet.EYE_COLOR, setOf("GREEN", "BLUE"))
 
-        assertTrue(clue.matches(suitor(eyeColor = EyeColor.GREEN)))
-        assertTrue(clue.matches(suitor(eyeColor = EyeColor.BLUE)))
-        assertFalse(clue.matches(suitor(eyeColor = EyeColor.AMBER)))
+        assertTrue(clue.matches(suitor(eyeColor = "GREEN")))
+        assertTrue(clue.matches(suitor(eyeColor = "BLUE")))
+        assertFalse(clue.matches(suitor(eyeColor = "AMBER")))
     }
 
     @Test
-    fun `attribute clues reject invalid parameters`() {
-        assertThrows<IllegalArgumentException> { AttributeIsNot(Attribute.ELEMENT, "BLUE") }
-        assertThrows<IllegalArgumentException> { AttributeIsOneOf(Attribute.INTEREST, setOf("SPORTY")) }
+    fun `one of clues need 2 or 3 values`() {
+        assertThrows<IllegalArgumentException> { AttributeIsOneOf(BookRuleSet.INTEREST, setOf("SPORTY")) }
         assertThrows<IllegalArgumentException> {
-            AttributeIsOneOf(Attribute.TEMPERAMENT, setOf("BROODING", "CHARMING", "RESERVED", "AMIABLE"))
+            AttributeIsOneOf(BookRuleSet.TEMPERAMENT, setOf("BROODING", "CHARMING", "RESERVED", "AMIABLE"))
         }
-        assertThrows<IllegalArgumentException> { AttributeIsOneOf(Attribute.ELEMENT, setOf("AIR", "BLOND")) }
     }
 
     @Test

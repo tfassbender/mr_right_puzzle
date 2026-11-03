@@ -5,12 +5,10 @@ internal data class FullName(val firstName: String, val lastName: String) {
 }
 
 /**
- * All 14,400 catalog names, grouped by the set of name clues they fail (a bit mask over [NameClues.all]).
+ * All 14,400 catalog names, grouped by the set of name clues they fail (a bit mask over the name clues).
  * Finalists need a name failing nothing, a name clue's near miss a name failing only that clue.
  */
-internal class NameGroups(nameClues: NameClues) {
-
-    private val clues: List<Clue> = nameClues.all
+internal class NameGroups(private val clues: List<Clue>) {
     private val groups: Map<Int, List<FullName>>
 
     init {
@@ -34,11 +32,8 @@ internal class NameGroups(nameClues: NameClues) {
         passingAll.filter { it.consonantCount > name.consonantCount }
 
     private fun failedClueMask(name: FullName): Int {
-        // Name clues only look at the name, so the attribute values of this probe don't matter.
-        val probe = Suitor(
-            0, name.firstName, name.lastName, Income.AT_LEAST_1K, Element.AIR, EyeColor.BROWN, HairColor.BLOND,
-            Temperament.BROODING, Interest.INTELLECTUAL,
-        )
+        // Name clues only look at the name, so this probe needs no attribute values.
+        val probe = Suitor(0, name.firstName, name.lastName, emptyMap())
         return clues.foldIndexed(0) { index, mask, clue -> if (clue.matches(probe)) mask else mask or (1 shl index) }
     }
 }

@@ -31,7 +31,7 @@ class GameResource(private val games: GameService) {
 
     @POST
     fun create(@Context securityContext: SecurityContext, request: CreateGameRequestDto): Response {
-        val command = CreateGameCommand(request.suitorCount, request.finalistCount, request.seed, request.name)
+        val command = CreateGameCommand(request.suitorCount, request.finalistCount, request.seed, request.name, request.ruleSet)
         val game = games.create(currentUserId(securityContext), command)
         return Response.status(Response.Status.CREATED).entity(game.toSummary()).build()
     }

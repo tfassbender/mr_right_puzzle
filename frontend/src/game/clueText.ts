@@ -1,4 +1,4 @@
-import type { Attribute, Clue } from '../api/gamesApi';
+import type { Clue } from '../api/gamesApi';
 import { m } from '../i18n/i18n';
 
 type MessageFn = (params?: Record<string, unknown>) => string;
@@ -11,11 +11,11 @@ function message(key: string): MessageFn {
 }
 
 /** The translated name of an attribute value, e.g. ("EYE_COLOR", "GREEN") → "green". */
-export function valueText(attribute: Attribute | 'INCOME', value: string): string {
+export function valueText(attribute: string, value: string): string {
   return message(`value_${attribute}_${value}`)();
 }
 
-export function attributeName(attribute: Attribute | 'INCOME'): string {
+export function attributeName(attribute: string): string {
   return message(`attr_${attribute}`)();
 }
 

@@ -80,6 +80,7 @@ class RestExceptionMapper @Inject constructor(
         GameError.INVALID_GAME_STATE,
         -> Response.Status.BAD_REQUEST
 
+        GameError.RULE_SET_LOCKED -> Response.Status.FORBIDDEN
         GameError.GAME_NOT_FOUND -> Response.Status.NOT_FOUND
         GameError.GAME_OUTDATED -> Response.Status.GONE
     }

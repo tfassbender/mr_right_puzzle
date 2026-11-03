@@ -11,6 +11,9 @@ enum class GameError {
     INVALID_SEED,
     INVALID_GAME_NAME,
 
+    /** The rule set is unknown or not unlocked for the player – both look the same, so locked ones aren't revealed. */
+    RULE_SET_LOCKED,
+
     /** Also for games of other players, so ids of foreign games aren't revealed. */
     GAME_NOT_FOUND,
 

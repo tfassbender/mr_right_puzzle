@@ -13,14 +13,14 @@ class PuzzleGeneratorTest {
     fun `same seed and config give the same puzzle`() {
         val config = PuzzleConfig(500, 2)
 
-        assertEquals(PuzzleGenerator.generate("emma", config), PuzzleGenerator.generate("emma", config))
+        assertEquals(generate("emma", config), generate("emma", config))
     }
 
     @Test
     fun `different seeds give different puzzles`() {
         val config = PuzzleConfig(500, 2)
 
-        assertNotEquals(PuzzleGenerator.generate("emma", config).suitors, PuzzleGenerator.generate("emmy", config).suitors)
+        assertNotEquals(generate("emma", config).suitors, generate("emmy", config).suitors)
     }
 
     /** The core property test: the verifier checks all guarantees, so it must pass for any seed and config. */
@@ -29,13 +29,13 @@ class PuzzleGeneratorTest {
     fun `every seed gives a valid puzzle`(suitorCount: Int, finalistCount: Int) {
         val config = PuzzleConfig(suitorCount, finalistCount)
         repeat(100) { index ->
-            PuzzleVerifier.verify(PuzzleGenerator.generate("seed-$index", config))
+            PuzzleVerifier.verify(generate("seed-$index", config))
         }
     }
 
     @Test
     fun `exactly the finalists match all clues and Mr Right has the fewest consonants`() {
-        val puzzle = PuzzleGenerator.generate("emma", PuzzleConfig(1000, 3))
+        val puzzle = generate("emma", PuzzleConfig(1000, 3))
 
         val matching = puzzle.suitors.filter { suitor -> puzzle.clues.all { it.matches(suitor) } }
         assertEquals(puzzle.finalistIds, matching.map { it.id }.toSet())
@@ -48,19 +48,19 @@ class PuzzleGeneratorTest {
 
     @Test
     fun `clues follow the book's order of subjects`() {
-        val clues = PuzzleGenerator.generate("emma", PuzzleConfig(100, 2)).clues
+        val clues = generate("emma", PuzzleConfig(100, 2)).clues
 
         assertEquals(12, clues.size)
-        assertEquals(Attribute.HAIR_COLOR, attributeOf(clues[0]))
+        assertEquals(BookRuleSet.HAIR_COLOR, attributeOf(clues[0]))
         assertTrue(clues[1] is IncomeAtLeast)
         assertEquals(InitialsDiffer, clues[2])
-        assertEquals(Attribute.TEMPERAMENT, attributeOf(clues[3]))
+        assertEquals(BookRuleSet.TEMPERAMENT, attributeOf(clues[3]))
         assertTrue(clues[4] is InitialsInRange)
-        assertEquals(Attribute.INTEREST, attributeOf(clues[5]))
-        assertEquals(Attribute.ELEMENT, attributeOf(clues[6]))
+        assertEquals(BookRuleSet.INTEREST, attributeOf(clues[5]))
+        assertEquals(BookRuleSet.ELEMENT, attributeOf(clues[6]))
         assertEquals(SurnameStartAndEndDiffer, clues[7])
         assertTrue(clues[8] is FirstNameVowelCount)
-        assertEquals(Attribute.EYE_COLOR, attributeOf(clues[9]))
+        assertEquals(BookRuleSet.EYE_COLOR, attributeOf(clues[9]))
         assertTrue(clues[10] is NameExcludesLetter)
         assertTrue(clues[11] is SurnameVowelCount)
     }
@@ -68,7 +68,7 @@ class PuzzleGeneratorTest {
     @Test
     fun `clue parameters stay within the decided limits`() {
         repeat(200) { index ->
-            val clues = PuzzleGenerator.generate("p-$index", PuzzleConfig(100, 1)).clues
+            val clues = generate("p-$index", PuzzleConfig(100, 1)).clues
 
             assertEquals(1, clues.count { it is AttributeIsNot })
             assertEquals(4, clues.count { it is AttributeIsOneOf })
@@ -82,10 +82,10 @@ class PuzzleGeneratorTest {
 
     @Test
     fun `10,000 suitors are generated quickly`() {
-        PuzzleGenerator.generate("warm-up", PuzzleConfig(10_000, 5))
+        generate("warm-up", PuzzleConfig(10_000, 5))
 
         val start = System.nanoTime()
-        val puzzle = PuzzleGenerator.generate("big", PuzzleConfig(10_000, 5))
+        val puzzle = generate("big", PuzzleConfig(10_000, 5))
         val millis = (System.nanoTime() - start) / 1_000_000
 
         assertEquals(10_000, puzzle.suitors.size)
@@ -93,9 +93,7 @@ class PuzzleGeneratorTest {
         assertTrue(millis < 3000, "generation took $millis ms")
     }
 
-    private fun attributeOf(clue: Clue): Attribute = when (clue) {
-        is AttributeIsNot -> clue.attribute
-        is AttributeIsOneOf -> clue.attribute
-        else -> error("$clue is not an attribute clue")
-    }
+    private fun attributeOf(clue: Clue): String = (clue as AttributeClue).attribute
+
+    private fun generate(seed: String, config: PuzzleConfig): Puzzle = PuzzleGenerator.generate(BookRuleSet, seed, config)
 }

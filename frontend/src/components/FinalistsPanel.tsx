@@ -39,7 +39,7 @@ export function FinalistsPanel({ store }: { store: GameStore }) {
           <li key={suitor.id}>
             <span class="suitor-main">
               <span class="suitor-name">Mr {suitorName(suitor)}</span>
-              <AttributeIcons suitor={suitor} />
+              <AttributeIcons suitor={suitor} ruleSet={game.ruleSet} />
             </span>
             <button type="button" class="primary" onClick={() => setCandidate(suitor)}>
               {m.game_pick()}

@@ -2,7 +2,10 @@ package com.tfassbender.mrright.game
 
 import com.tfassbender.mrright.auth.UserId
 import com.tfassbender.mrright.puzzle.Puzzle
+import com.tfassbender.mrright.puzzle.BookRuleSet
+import com.tfassbender.mrright.puzzle.PuzzleConfig
 import com.tfassbender.mrright.puzzle.PuzzleGenerator
+import com.tfassbender.mrright.puzzle.RuleSets
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,11 +28,15 @@ class GameServiceTest {
     private val now = Instant.parse("2026-10-28T10:00:00Z")
     private lateinit var repository: GameRepository
     private lateinit var service: GameService
+    private var unlocked: Set<String> = emptySet()
 
     @BeforeEach
     fun setUp() {
         repository = GameRepository(dataDir)
-        service = GameService(repository, Clock.fixed(now, ZoneOffset.UTC), PuzzleGenerator::generate, UUID::randomUUID)
+        val puzzleFor = { ruleSet: String, seed: String, config: PuzzleConfig ->
+            PuzzleGenerator.generate(RuleSets.byId(ruleSet)!!, seed, config)
+        }
+        service = GameService(repository, Clock.fixed(now, ZoneOffset.UTC), puzzleFor, UUID::randomUUID) { unlocked }
     }
 
     private fun createGame(): Game = service.create(emma, CreateGameCommand(100, 2, "emma"))
@@ -48,7 +55,8 @@ class GameServiceTest {
         val game = createGame()
 
         assertEquals("emma", game.seed)
-        assertEquals(PuzzleGenerator.GENERATOR_VERSION, game.generatorVersion)
+        assertEquals(RuleSets.BOOK, game.ruleSet)
+        assertEquals(BookRuleSet.generatorVersion, game.generatorVersion)
         assertEquals(GameState.initial(now), game.state)
         assertEquals(listOf(game), service.list(emma))
     }
@@ -117,6 +125,25 @@ class GameServiceTest {
         val solved = service.saveState(emma, game.id, 0, update(allButFinalists, true, puzzle.solutionId, puzzle.finalistIds))
         assertEquals(puzzle.finalistIds, solved.possibleMatches)
         assertTrue(solved.solved)
+    }
+
+    @Test
+    fun `the book is the default, other rule sets need to be unlocked`() {
+        assertEquals(RuleSets.BOOK, service.create(emma, CreateGameCommand(100, 2, null, ruleSet = " ")).ruleSet)
+        assertEquals(RuleSets.BOOK, service.create(emma, CreateGameCommand(100, 2, null, ruleSet = RuleSets.BOOK)).ruleSet)
+
+        // Unknown and locked rule sets are rejected alike – even when an unknown id is "unlocked" in the user file.
+        unlocked = setOf("SECRET")
+        val exception = assertThrows<GameException> { service.create(emma, CreateGameCommand(100, 2, null, ruleSet = "SECRET")) }
+        assertEquals(GameError.RULE_SET_LOCKED, exception.error)
+    }
+
+    @Test
+    fun `games of a removed rule set are outdated`() {
+        val game = createGame().copy(ruleSet = "REMOVED")
+        repository.save(game)
+
+        assertTrue(service.list(emma).single().outdated)
     }
 
     @Test

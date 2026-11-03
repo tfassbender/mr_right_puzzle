@@ -2,6 +2,7 @@ import { del, get, set } from 'idb-keyval';
 import type { GameDto, GameSummary } from '../api/gamesApi';
 import { session } from '../auth/session';
 import type { PlayState } from '../game/playState';
+import { upgradeStoredGame } from './upgradeStoredGame';
 
 /**
  * The local copy of a game's progress. [baseVersion] is the server version [state] builds on;
@@ -33,7 +34,10 @@ export function storeGame(game: GameDto): Promise<void> {
 }
 
 export function loadStoredGame(id: string): Promise<GameDto | undefined> {
-  return safely(() => get<GameDto>(key('game', id)), undefined);
+  return safely(async () => {
+    const game = await get<GameDto>(key('game', id));
+    return game && upgradeStoredGame(game);
+  }, undefined);
 }
 
 export function storeLocalState(gameId: string, local: LocalGameState): Promise<void> {

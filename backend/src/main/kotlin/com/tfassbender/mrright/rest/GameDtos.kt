@@ -13,6 +13,7 @@ data class CreateGameRequestDto(
     val finalistCount: Int = 0,
     val seed: String? = null,
     val name: String? = null,
+    val ruleSet: String? = null,
 )
 
 /** [updatedAt] defaults to the epoch, so a missing value can't fail deserialization. */
@@ -44,6 +45,7 @@ data class GameStateDto(
 data class GameSummaryDto(
     val id: String,
     val name: String?,
+    val ruleSet: String,
     val seed: String,
     val suitorCount: Int,
     val finalistCount: Int,
@@ -60,6 +62,7 @@ data class GameSummaryDto(
 data class GameDto(
     val id: String,
     val name: String?,
+    val ruleSet: String,
     val seed: String,
     val suitorCount: Int,
     val finalistCount: Int,
@@ -79,11 +82,11 @@ fun GameState.toDto(): GameStateDto =
     GameStateDto(crossedOut.sorted(), possibleMatches.sorted(), finalistsFound, mrRightId, solved, wrongGuesses, version, updatedAt)
 
 fun Game.toSummary(): GameSummaryDto = GameSummaryDto(
-    id.toString(), name, seed, config.suitorCount, config.finalistCount, createdAt, outdated,
+    id.toString(), name, ruleSet, seed, config.suitorCount, config.finalistCount, createdAt, outdated,
     state.crossedOut.size, state.finalistsFound, state.solved, state.wrongGuesses, state.updatedAt,
 )
 
 fun LoadedGame.toDto(): GameDto = GameDto(
-    game.id.toString(), game.name, game.seed, game.config.suitorCount, game.config.finalistCount, game.generatorVersion,
+    game.id.toString(), game.name, game.ruleSet, game.seed, game.config.suitorCount, game.config.finalistCount, game.generatorVersion,
     game.createdAt, puzzle.suitors, puzzle.clues, finalistsHash, solutionHash, game.state.toDto(),
 )

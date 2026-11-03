@@ -153,7 +153,7 @@ function SuitorRow({ store, suitor, style }: SuitorRowProps) {
         <span class="suitor-number">{suitor.id + 1}</span>
         <span class="suitor-main">
           <span class="suitor-name">{name}</span>
-          <AttributeIcons suitor={suitor} />
+          <AttributeIcons suitor={suitor} ruleSet={store.game.ruleSet} />
         </span>
       </button>
       <button

@@ -193,5 +193,8 @@
   "about_description": "A logic elimination puzzle: find the one Mr Right among hundreds of bachelors by crossing out everyone who doesn't match the lady's wishes.",
   "about_author": "Author:",
   "about_source": "Source code on GitHub",
-  "about_copyright": "© {year} {author}"
+  "about_copyright": "© {year} {author}",
+  "new_game_rule_set": "Rule set",
+  "rule_set_BOOK": "Classic",
+  "error_RULE_SET_LOCKED": "This rule set is not available for your account."
 }

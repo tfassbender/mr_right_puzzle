@@ -13,12 +13,7 @@ function suitor(id: number): Suitor {
     id,
     firstName: 'Edward',
     lastName: 'Ashby',
-    income: 'AT_LEAST_4K',
-    element: 'AIR',
-    eyeColor: 'GREEN',
-    hairColor: 'BROWN',
-    temperament: 'BROODING',
-    interest: 'INTELLECTUAL',
+    attributes: { INCOME: 'AT_LEAST_4K', ELEMENT: 'AIR', EYE_COLOR: 'GREEN' },
   };
 }
 
@@ -26,6 +21,7 @@ async function newStore(onChange: (state: PlayState) => void = () => {}) {
   const game: GameDto = {
     id: GAME_ID,
     name: 'Emma',
+    ruleSet: 'BOOK',
     seed: 'emma',
     suitorCount: 10,
     finalistCount: 2,

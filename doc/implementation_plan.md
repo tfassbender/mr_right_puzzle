@@ -116,6 +116,78 @@ The game list shows unsaved local progress and falls back to the stored list whe
 `config/application.properties`. The look & feel and the clue flavour texts were moved to "Later".
 After a deploy, browsers keep the cached (PWA) version until the next reload.
 
+## Phase 8 – Rule sets: a personal puzzle (version 1.1)
+
+A second rule set next to the book's: fixed criteria (her wishes) instead of random clues, mostly its own
+attributes, unlocked per user. Decisions so far:
+
+- **Rule sets:** `BOOK` (today's puzzle) is always available. Other rule sets are unlocked per user via
+  `unlockedRuleSets` in the user file (edited by hand on the server, no admin UI).
+- **Choice in "New puzzle":** the rule set is the first field. The dropdown lists only the user's available
+  rule sets, and is not shown at all if `BOOK` is the only one. The server rejects locked rule sets.
+- **Personal rule set:** fixed clues (simple AND filters, like the book). Only the directory changes with the seed.
+  It replaces most of the book's attributes. The name catalog and name logic stay. Suitor count and finalist
+  count stay configurable. Texts in en + de, plus its own intro.
+- **Finale ("one more suitor"):** after the correct Mr Right pick, one more suitor "just came in" – the author.
+  He is not in the directory and is fixed (not generated). He also matches all criteria and wins a final tie-break.
+- **Privacy:** the rule set lives in the (public) code like the book's – accepted.
+
+**Criteria and how they become attributes and clues:** [personal-rule-set.md](personal-rule-set.md).
+
+**Open points (decide with the criteria):** rule set id and display name, attributes with values and icons,
+the clues, the tie-break rule, the finale's attributes, tie-break and texts, the intro text.
+
+### 8a – Rule set foundation (no visible change) ✅
+
+**Exit criteria:** book puzzles are byte-identical for the same seeds; all tests pass.
+
+- [x] Golden test first: a hash of the puzzle for a few fixed seeds/configs, recorded before the refactoring
+- [x] `RuleSet` in `puzzle`: id, attribute definitions, clue set, generator version
+- [x] Generic attributes: `Suitor.attributes` (attribute → value) instead of the typed fields.
+      Attribute clues share `AttributeClue`; `IncomeAtLeast` stays a book clue. The clue JSON is unchanged
+- [x] `Game.ruleSet` (default `BOOK` for existing files), `outdated` checks the generator version of the game's rule set
+- [x] Frontend: icons and legend come from the rule set, not from fixed suitor fields. Puzzles stored on the
+      device in the old shape are converted when loaded (works offline, no reload needed)
+- [x] Update `architecture.md` (puzzle model, generation, game model)
+
+**Status:** the book puzzles are unchanged (`BookGoldenTest`), so the book stays at generator version 1 and
+existing games keep working. The tie-break is still the generator's consonant rule – it becomes part of the
+rule set in 8c, once her rule is known.
+
+### 8b – Unlocking and choosing a rule set ✅
+
+**Exit criteria:** an unlocked user can choose the rule set, everybody else sees no difference.
+
+- [x] `User.unlockedRuleSets` (default empty); available = `BOOK` + unlocked
+- [x] Available rule sets in the user DTO (login / me), so the frontend also knows them offline
+- [x] `ruleSet` in the create request (default `BOOK`); a locked or unknown one → error code `RULE_SET_LOCKED` (403)
+- [x] "New puzzle": rule set dropdown first, only if more than one is available
+- [x] Game list: show the rule set's name for non-book games
+- [x] Tests: RestAssured (locked), e2e (no dropdown for normal users)
+
+**Status:** the book is named "Classic" / "Klassisch". With only the book in the code, the unlocked path
+(dropdown shown, game created with another rule set) can't be tested yet – it gets tests with her rule set in 8c.
+
+### 8c – The personal rule set
+
+**Exit criteria:** she can create and solve a puzzle with her criteria on a phone.
+
+- [ ] Attributes, values and icons (en + de)
+- [ ] The fixed clues and their texts; the generator works with fixed clues (finalists and near misses
+      possible for every clue – checked by a test, since the parameters can't be re-rolled)
+- [ ] Tie-break rule
+- [ ] Rule-set-specific intro ("Story & rules")
+- [ ] Generator tests over many seeds, e2e: create and solve
+
+### 8d – The finale
+
+**Exit criteria:** after the correct pick, the extra suitor appears and wins.
+
+- [ ] The extra suitor as part of the rule set (name + attributes); a test checks he matches all clues and wins
+      the final tie-break against every possible Mr Right
+- [ ] Finale dialog after the correct pick; can be opened again from the solved game
+- [ ] Texts en + de, e2e test
+
 ## Later (optional)
 
 - [ ] Look & feel: Regency theme, own icons (decide first – postponed point)

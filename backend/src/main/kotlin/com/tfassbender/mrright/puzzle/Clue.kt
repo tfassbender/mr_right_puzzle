@@ -1,5 +1,6 @@
 package com.tfassbender.mrright.puzzle
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
@@ -23,26 +24,45 @@ sealed interface Clue {
     fun matches(suitor: Suitor): Boolean
 }
 
-data class IncomeAtLeast(val level: Income) : Clue {
-    override fun matches(suitor: Suitor): Boolean = suitor.income >= level
+/**
+ * A clue on one attribute. The generator builds finalists from the values it [allows] and near misses from the
+ * others; the rule set's clue set checks that [referencedValues] exist.
+ */
+sealed interface AttributeClue : Clue {
+    val attribute: String
+
+    fun allows(value: String): Boolean
+
+    fun referencedValues(): Set<String>
+
+    override fun matches(suitor: Suitor): Boolean = allows(suitor.value(attribute))
 }
 
-data class AttributeIsNot(val attribute: Attribute, val value: String) : Clue {
-    init {
-        require(value in attribute.valueNames) { "$value is not a value of $attribute" }
-    }
+/** Book only: the income is ordinal. The attribute is implied by the type, so it is not part of the JSON. */
+data class IncomeAtLeast(val level: Income) : AttributeClue {
+    @get:JsonIgnore
+    override val attribute: String get() = BookRuleSet.INCOME
 
-    override fun matches(suitor: Suitor): Boolean = attribute.valueName(suitor) != value
+    override fun allows(value: String): Boolean = Income.valueOf(value) >= level
+
+    override fun referencedValues(): Set<String> = setOf(level.name)
+}
+
+data class AttributeIsNot(override val attribute: String, val value: String) : AttributeClue {
+    override fun allows(value: String): Boolean = value != this.value
+
+    override fun referencedValues(): Set<String> = setOf(value)
 }
 
 /** "One of" always allows 2 or 3 values – a single value would make the clue too strong. */
-data class AttributeIsOneOf(val attribute: Attribute, val values: Set<String>) : Clue {
+data class AttributeIsOneOf(override val attribute: String, val values: Set<String>) : AttributeClue {
     init {
         require(values.size in 2..3) { "one-of clues need 2 or 3 values, got $values" }
-        require(attribute.valueNames.containsAll(values)) { "$values are not all values of $attribute" }
     }
 
-    override fun matches(suitor: Suitor): Boolean = attribute.valueName(suitor) in values
+    override fun allows(value: String): Boolean = value in values
+
+    override fun referencedValues(): Set<String> = values
 }
 
 data object InitialsDiffer : Clue {

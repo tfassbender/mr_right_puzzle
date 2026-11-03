@@ -2,26 +2,31 @@ package com.tfassbender.mrright.game
 
 import com.tfassbender.mrright.auth.UserId
 import com.tfassbender.mrright.puzzle.PuzzleConfig
-import com.tfassbender.mrright.puzzle.PuzzleGenerator
+import com.tfassbender.mrright.puzzle.RuleSets
 import java.time.Instant
 import java.util.UUID
 
 /**
  * A player's game. Only seed + config are stored – the puzzle is regenerated from them on demand.
  * [name] is chosen by the player (the frontend suggests a default); `null` for games created before names existed.
+ * [ruleSet] defaults to the book for games created before rule sets existed.
  */
 data class Game(
     val id: UUID,
     val ownerId: UserId,
     val seed: String,
     val config: PuzzleConfig,
-    val generatorVersion: Int, // GENERATOR_VERSION at creation time
+    val generatorVersion: Int, // the rule set's generator version at creation time
     val createdAt: Instant,
     val state: GameState,
     val name: String? = null,
+    val ruleSet: String = RuleSets.BOOK,
 ) {
-    /** The generator changed since creation, so the puzzle can't be rebuilt – the game can only be deleted. */
-    val outdated: Boolean get() = generatorVersion != PuzzleGenerator.GENERATOR_VERSION
+    /**
+     * The rule set's generator changed since creation (or the rule set is gone), so the puzzle can't be rebuilt –
+     * the game can only be deleted.
+     */
+    val outdated: Boolean get() = generatorVersion != RuleSets.byId(ruleSet)?.generatorVersion
 
     companion object {
         const val NAME_MAX_LENGTH = 60

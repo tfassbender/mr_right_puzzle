@@ -6,6 +6,7 @@ export interface SessionUser {
   displayName: string;
   emailVerified: boolean;
   language: string | null;
+  ruleSets?: string[]; // missing in sessions stored before rule sets existed – then only the book
 }
 
 export interface Session {

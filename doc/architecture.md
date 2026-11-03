@@ -68,27 +68,26 @@ Dependencies: `quarkus-rest-jackson`, `quarkus-kotlin`, `quarkus-arc`, `quarkus-
 
 ### Puzzle Model
 
-The book's six attributes, each suitor has exactly one value per attribute (see
-[puzzle-analysis.md](puzzle-analysis.md#attributes-legend)):
+A **rule set** (`RuleSet`) defines a kind of puzzle: its attributes and how the clues are chosen. The name catalog,
+the name clues and the generator algorithm are shared. `RuleSets.all` lists them; `BOOK` (`BookRuleSet`, the
+book's six attributes and 12 random clues) is available to everybody, others only when unlocked for the user
+(see Authentication).
 
 ```kotlin
-enum class Income { AT_LEAST_1K, AT_LEAST_2K, AT_LEAST_4K, AT_LEAST_10K }   // £ .. ££££, ordinal
-enum class Element { AIR, FIRE, WATER, EARTH }
-enum class EyeColor { BROWN, BROWN_GREEN, AMBER, GREEN, BLUE }
-enum class HairColor { BLOND, BROWN, BLACK, AUBURN }
-enum class Temperament { BROODING, CHARMING, RESERVED, AMIABLE, DASHING }
-enum class Interest { INTELLECTUAL, MUSICAL, SPORTY, SOCIABLE }
+interface RuleSet {
+    val id: String                               // "BOOK", stored with every game
+    val generatorVersion: Int                    // per rule set, stored with every game
+    val attributes: List<AttributeDefinition>    // in the order of the random draws
+    fun clues(random: Random, finalistCount: Int): ClueSet
+}
+
+data class AttributeDefinition(val id: String, val values: List<String>)   // values in legend order
 
 data class Suitor(
-    val id: Int,                 // position in the directory, 0-based
+    val id: Int,                          // position in the directory, 0-based
     val firstName: String,
     val lastName: String,
-    val income: Income,
-    val element: Element,
-    val eyeColor: EyeColor,
-    val hairColor: HairColor,
-    val temperament: Temperament,
-    val interest: Interest,
+    val attributes: Map<String, String>,  // attribute id -> value, e.g. "EYE_COLOR" -> "GREEN"
 )
 
 data class PuzzleConfig(val suitorCount: Int, val finalistCount: Int)   // 100..10,000 and 1..5
@@ -96,11 +95,16 @@ data class PuzzleConfig(val suitorCount: Int, val finalistCount: Int)   // 100..
 data class Puzzle(
     val config: PuzzleConfig,
     val suitors: List<Suitor>,
-    val clues: List<Clue>,         // always 12, in the book's order
+    val clues: List<Clue>,         // in the order the player sees them
     val finalistIds: Set<Int>,     // suitors matching all clues
     val solutionId: Int,           // Mr Right: the finalist with the fewest consonants
 )
 ```
+
+The book's attributes (see [puzzle-analysis.md](puzzle-analysis.md#attributes-legend)) are plain strings;
+only `Income` is still an enum, because `IncomeAtLeast` compares the levels. The order of `BookRuleSet.attributes`
+(element, eyes, hair, temperament, interest, income) is the order of the random draws and part of the generator –
+the icon row order (income first) is defined in the frontend (`src/game/ruleSets.ts`).
 
 Name-derived properties (initials, vowel and consonant counts) are computed, not stored.
 Vowels are a, e, i, o, u; y is a consonant. Names contain only the letters A–Z.
@@ -113,10 +117,11 @@ sealed interface Clue {
     fun matches(suitor: Suitor): Boolean
 }
 
-// attribute clues
-data class IncomeAtLeast(val level: Income) : Clue                               // AT_LEAST_2K or AT_LEAST_4K
-data class AttributeIsNot(val attribute: Attribute, val value: String) : Clue    // exactly one value
-data class AttributeIsOneOf(val attribute: Attribute, val values: Set<String>) : Clue   // 2 or 3 values
+// attribute clues: the generator builds finalists from the allowed values, near misses from the others
+sealed interface AttributeClue : Clue { val attribute: String; fun allows(value: String): Boolean }
+data class IncomeAtLeast(val level: Income) : AttributeClue                          // book only; AT_LEAST_2K or _4K
+data class AttributeIsNot(val attribute: String, val value: String) : AttributeClue  // exactly one value
+data class AttributeIsOneOf(val attribute: String, val values: Set<String>) : AttributeClue   // 2 or 3 values
 
 // name clues
 data object InitialsDiffer : Clue                                       // first name and surname initial differ
@@ -125,19 +130,18 @@ data object SurnameStartAndEndDiffer : Clue
 data class FirstNameVowelCount(val count: Int) : Clue                   // exactly 2 or 3
 data class SurnameVowelCount(val count: Int) : Clue                     // exactly 2 or 3
 data class NameExcludesLetter(val letter: Char) : Clue                  // one of B, H, K, P, W
-
-enum class Attribute { ELEMENT, EYE_COLOR, HAIR_COLOR, TEMPERAMENT, INTEREST }
 ```
 
-`value`/`values` hold the enum constant names of the given attribute (e.g. `"BLOND"`); the implementation may
-use typed values internally as long as the JSON stays the same.
+A rule set's clues come as a `ClueSet`: the attribute clues (at most one per attribute – attributes without a
+clue allow every value), the name clues, and all clues in display order. It checks that every attribute clue
+fits the rule set's attributes and has both allowed and disallowed values.
 
 JSON examples:
 - `{ "type": "INCOME_AT_LEAST", "level": "AT_LEAST_4K" }` → en: "He earns at least £££ a year."
 - `{ "type": "ATTRIBUTE_IS_ONE_OF", "attribute": "EYE_COLOR", "values": ["GREEN", "BLUE"] }`
 - `{ "type": "NAME_EXCLUDES_LETTER", "letter": "H" }`
 
-**Clue set** – always the book's 12 clues, one per "subject":
+**Book clue set** – always the book's 12 clues, one per "subject":
 
 | Subject                              | Clue                                                   |
 |--------------------------------------|--------------------------------------------------------|
@@ -154,27 +158,30 @@ lists is part of the generator (changing it changes all puzzles → new `generat
 
 ### Puzzle Generation
 
-Deterministic: same seed + same config + same generator version → same puzzle.
+Deterministic: same rule set + same seed + same config + same generator version → same puzzle.
 
 - **Seed**: a free-text string (entered by the player or random). It is hashed (SHA-256, first 8 bytes)
   into a `Long` for `kotlin.random.Random`. Words like `"emma"` work as seeds.
 - Seeds are 1–64 characters without leading/trailing spaces; a random seed is 10 lowercase letters/digits.
 - **Config**: `suitorCount` (100–10,000) and `finalistCount` (1–5), validated against these limits.
   The clue count is fixed (12).
-- **`GENERATOR_VERSION`**: a constant in the generator, stored with every game. It is increased whenever
-  a change would produce a different puzzle for the same seed. No migration and no old generator versions
-  are kept: a game with an outdated version is marked as outdated in the game list and can only be deleted.
-- Only seed, config and generator version are stored; the puzzle is regenerated on demand and kept in an
-  in-memory cache (`quarkus-cache`, keyed by seed + config).
+- **`generatorVersion`**: per rule set, stored with every game. It is increased whenever a change would produce
+  a different puzzle for the same seed – so changing one rule set never outdates the games of another.
+  No migration and no old generator versions are kept: a game with an outdated version (or a removed rule set)
+  is marked as outdated in the game list and can only be deleted.
+- `BookGoldenTest` pins the book puzzles of a few seeds to a hash, so a refactoring can't swap existing puzzles
+  unnoticed.
+- Only rule set, seed, config and generator version are stored; the puzzle is regenerated on demand and kept in
+  an in-memory cache (`quarkus-cache`, keyed by rule set + seed + config).
 
 **Algorithm** – constructive: decide the clues and the finalists first, then build everybody else around them,
 so a valid puzzle comes out in a single pass (no searching for a random directory that happens to work):
 
-1. **Clues**: pick the 12 clues with random parameters (see clue set above).
+1. **Clues**: the rule set picks its clues (book: the 12 clues with random parameters, see clue set above).
 2. **Name groups**: evaluate the 6 name clues on all 14,400 catalog combinations and group them by the set of
    name clues they fail. Needed: a group failing *no* name clue (for finalists) and, per name clue, a group
-   failing *only* that clue (for near misses). If one is empty or the finalists' tie-break below is impossible,
-   re-roll the name clue parameters (step 1).
+   failing *only* that clue (for near misses). The book re-rolls its name clue parameters if one is empty or
+   the finalists' tie-break below is impossible; for fixed clues that is a bug the rule set's tests must catch.
 3. **Finalists**: create `finalistCount` suitors that match all clues – attributes drawn from the allowed values,
    names from the "fails nothing" group. Mr Right gets the name with the fewest consonants; the other finalists
    get names with strictly more consonants, so the tie-break is unique.
@@ -199,7 +206,8 @@ data class Game(
     val ownerId: UserId,
     val seed: String,
     val config: PuzzleConfig,
-    val generatorVersion: Int,     // GENERATOR_VERSION at creation time
+    val ruleSet: String,           // rule set id, "BOOK" for games created before rule sets existed
+    val generatorVersion: Int,     // the rule set's generator version at creation time
     val createdAt: Instant,
     val state: GameState,
 )
@@ -246,6 +254,9 @@ Reused from `avalons_final_stand`:
 - An account is required to play.
 - Token lifetime: **30 days** instead of 24 h, so offline sessions and device switches
   don't keep forcing a new login.
+- **Unlocked rule sets**: `unlockedRuleSets` in the user file (edited by hand on the server, no admin UI).
+  Login, register and `/auth/me` return `ruleSets`: the book plus the unlocked ones (unknown ids are ignored).
+  The frontend re-reads `/auth/me` on start, so an unlock shows up after a reload.
 
 ## REST API
 
@@ -255,7 +266,7 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 |--------|----------------------------|----------------------------------------------------------|
 | POST   | `/auth/register`, `/auth/login`, … | Auth flows (as in the reference project)         |
 | GET    | `/games`                   | List own games with a progress summary                   |
-| POST   | `/games`                   | Create a game `{ suitorCount, finalistCount, seed? }`    |
+| POST   | `/games`                   | Create a game `{ suitorCount, finalistCount, seed?, name?, ruleSet? }` |
 | GET    | `/games/{id}`              | Puzzle (suitors, clues, `finalistCount`, hashes) + state |
 | GET    | `/games/{id}/state`        | Only the state (cheap refresh on open / tab return)      |
 | PUT    | `/games/{id}/state`        | Save state `{ baseVersion, state }` → new version or 409 |
@@ -265,6 +276,7 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 - **Payload size**: a 10,000-suitor puzzle is roughly 1.5–2 MB of JSON; HTTP compression
   (`quarkus.http.enable-compression`) shrinks it to a small fraction. Optimize the format only if needed.
 - **Error codes** (besides auth): `INVALID_GAME_CONFIG`, `INVALID_SEED`, `INVALID_GAME_STATE` (400),
+  `RULE_SET_LOCKED` (403, unknown or not unlocked – both look the same),
   `GAME_NOT_FOUND` (404, also for other players' games), `GAME_OUTDATED` (410, load/save of an outdated game),
   `VERSION_CONFLICT` (409, body carries the current server `state`).
 - **Solution check**: the puzzle contains two hashes instead of the ids, so both steps can be checked
@@ -298,11 +310,12 @@ All endpoints under `/api`, JSON, JWT required except auth/info/health.
 - **Game list**: own games with progress (crossed out / total, solved, wrong guesses), "New game" button, and a
   "Story & rules" button next to it: a dialog with a short original Regency story (no reference to the book)
   and the rules
-- **New game**: suitor count, finalist count; under "Advanced options" the name and the seed (with a
+- **New game**: the rule set first (a dropdown of the user's available rule sets – not shown if only the book
+  is available), then suitor count, finalist count; under "Advanced options" the name and the seed (with a
   "random" button). The name defaults to "Mr Right - <date>" (date in the player's language), with " (2)",
   " (3)" … if the player already has a game with that name – computed in the frontend from the game list.
   Games created before names existed have none and are listed with the default name of their creation date.
-  The game list doesn't show the seed
+  The game list doesn't show the seed; it shows the rule set's name for games that aren't book games
 - **Game view**:
   - Directory: virtualized list, split into numbered sections of 100 suitors (section = `id / 100`);
     only the rows in view are rendered. Tap a row to cross out / restore, the star at its right marks a
@@ -349,6 +362,8 @@ Keys are namespaced by user id (`<userId>:…`), so accounts on a shared device 
 | `<userId>:list`      | The last game list from the server, shown when offline             |
 
 A game opens from IndexedDB if it's there (works offline) and then refreshes from `GET /games/{id}/state`.
+Puzzles stored before rule sets existed (book suitors with fixed fields, no `ruleSet`) are converted to the
+attribute map when they are loaded (`upgradeStoredGame`), so they keep working offline.
 The game list shows a game's local progress when it is `dirty` (not saved yet) or when offline.
 The SyncManager's status is `synced`, `pending`, `offline` (network error, retried every 30 s and on `online`)
 or `error` (rejected by the server, e.g. deleted – not retried).

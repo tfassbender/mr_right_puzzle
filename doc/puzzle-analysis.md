@@ -158,6 +158,11 @@ The puzzle model and the generation algorithm are described in [architecture.md]
   (see architecture). With at most 10,000 suitors these hashes can be brute-forced. That is fine –
   it's a single-player game with nothing to win; whoever cheats only spoils their own puzzle.
 
+### Rule sets
+- Everything above describes the **book** rule set, which is always available.
+- A second, **personal** rule set has fixed criteria and mostly its own attributes, and is unlocked per user.
+  See Phase 8 in [implementation_plan.md](implementation_plan.md) for the decisions and open points.
+
 ### Puzzles & sharing
 - Every player can create puzzles; they are persisted on the server.
 - A player can have multiple puzzles at once, regardless of their state.

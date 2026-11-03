@@ -13,8 +13,8 @@ class ClueJsonTest {
 
     private val allClueTypes: List<Clue> = listOf(
         IncomeAtLeast(Income.AT_LEAST_4K),
-        AttributeIsNot(Attribute.HAIR_COLOR, "BLOND"),
-        AttributeIsOneOf(Attribute.EYE_COLOR, setOf("GREEN", "BLUE")),
+        AttributeIsNot(BookRuleSet.HAIR_COLOR, "BLOND"),
+        AttributeIsOneOf(BookRuleSet.EYE_COLOR, setOf("GREEN", "BLUE")),
         InitialsDiffer,
         InitialsInRange(LetterRange.A_TO_M),
         SurnameStartAndEndDiffer,
@@ -31,7 +31,7 @@ class ClueJsonTest {
         )
         assertEquals(
             """{"type":"ATTRIBUTE_IS_ONE_OF","attribute":"EYE_COLOR","values":["GREEN","BLUE"]}""",
-            mapper.writeValueAsString(AttributeIsOneOf(Attribute.EYE_COLOR, setOf("GREEN", "BLUE"))),
+            mapper.writeValueAsString(AttributeIsOneOf(BookRuleSet.EYE_COLOR, setOf("GREEN", "BLUE"))),
         )
         assertEquals("""{"type":"NAME_EXCLUDES_LETTER","letter":"H"}""", mapper.writeValueAsString(NameExcludesLetter('H')))
         assertEquals("""{"type":"INITIALS_DIFFER"}""", mapper.writeValueAsString(InitialsDiffer))

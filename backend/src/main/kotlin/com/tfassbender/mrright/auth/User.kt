@@ -12,6 +12,8 @@ value class UserId(val value: String)
  * so a leaked user file can't be used to verify or reset an account.
  *
  * [language] is the UI language chosen by the user, saved so it follows them to every device.
+ * [unlockedRuleSets] are the rule sets beyond the book this user may play. There is no UI for it – it is edited
+ * by hand in the user file on the server.
  */
 data class User(
     val id: UserId,
@@ -25,4 +27,5 @@ data class User(
     val passwordResetTokenExpiresAt: Instant? = null,
     val createdAt: Instant,
     val language: String? = null,
+    val unlockedRuleSets: Set<String> = emptySet(),
 )

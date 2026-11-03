@@ -1,5 +1,6 @@
 package com.tfassbender.mrright.rest
 
+import com.tfassbender.mrright.puzzle.BookRuleSet
 import com.tfassbender.mrright.puzzle.PuzzleConfig
 import com.tfassbender.mrright.puzzle.PuzzleGenerator
 import io.quarkus.test.junit.QuarkusTest
@@ -52,11 +53,14 @@ class GameResourceTest {
             .body("", hasSize<Any>(1))
             .body("[0].id", equalTo(id))
             .body("[0].name", equalTo("Sunday puzzle"))
+            .body("[0].ruleSet", equalTo("BOOK"))
 
         asPlayer().get("/api/games/$id").then().statusCode(200)
             .body("suitors", hasSize<Any>(100))
             .body("clues", hasSize<Any>(12))
             .body("clues[0].type", notNullValue())
+            .body("ruleSet", equalTo("BOOK"))
+            .body("suitors[0].attributes.EYE_COLOR", notNullValue())
             .body("finalistsHash", notNullValue())
             .body("state.version", equalTo(0))
             .body("name", equalTo("Sunday puzzle"))
@@ -84,9 +88,18 @@ class GameResourceTest {
     }
 
     @Test
+    fun `a locked rule set is rejected`() {
+        asPlayer()
+            .body(mapOf("suitorCount" to 100, "finalistCount" to 2, "ruleSet" to "SECRET"))
+            .post("/api/games")
+            .then().statusCode(403)
+            .body("code", equalTo("RULE_SET_LOCKED"))
+    }
+
+    @Test
     fun `a solved state is accepted only with the right Mr Right`() {
         val id = createGame("solve-me")
-        val puzzle = PuzzleGenerator.generate("solve-me", PuzzleConfig(100, 2))
+        val puzzle = PuzzleGenerator.generate(BookRuleSet, "solve-me", PuzzleConfig(100, 2))
         val crossedOut = puzzle.suitors.map { it.id }.filterNot { it in puzzle.finalistIds }
         val wrongId = puzzle.finalistIds.first { it != puzzle.solutionId }
         fun state(mrRightId: Int) = mapOf(

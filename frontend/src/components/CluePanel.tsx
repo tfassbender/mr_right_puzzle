@@ -1,7 +1,8 @@
 import type { GameDto } from '../api/gamesApi';
 import { attributeName, clueText, valueText } from '../game/clueText';
 import { m } from '../i18n/i18n';
-import { AttributeIcon, LEGEND } from './AttributeIcons';
+import { attributesOf } from '../game/ruleSets';
+import { AttributeIcon } from './AttributeIcons';
 
 interface CluePanelProps {
   game: GameDto;
@@ -31,7 +32,7 @@ export function CluePanel({ game, open, onClose }: CluePanelProps) {
         <p class="muted">{m.clues_vowels_note()}</p>
         <h2>{m.game_legend()}</h2>
         <dl class="legend">
-          {LEGEND.map(({ attribute, values }) => (
+          {attributesOf(game.ruleSet).map(({ attribute, values }) => (
             <div key={attribute}>
               <dt>{attributeName(attribute)}</dt>
               <dd>
