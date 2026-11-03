@@ -35,7 +35,7 @@ dependencies {
 }
 
 group = "com.tfassbender.mrright"
-version = "1.0.0"
+version = "1.0.1"
 
 // Quarkus needs CDI beans, REST resources and test classes to be non-final.
 allOpen {
