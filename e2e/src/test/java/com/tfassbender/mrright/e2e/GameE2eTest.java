@@ -92,11 +92,6 @@ class GameE2eTest extends E2eBase {
         assertThat(cluesButton).hasAttribute("aria-expanded", "false");
     }
 
-    private void submit(Page page, Locator check) {
-        check.click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Check them")).click();
-    }
-
     @ParameterizedTest
     @EnumSource(Viewport.class)
     void openingAGameJumpsToTheFirstUnmarkedSuitor(Viewport viewport) {
@@ -113,13 +108,5 @@ class GameE2eTest extends E2eBase {
         assertThat(page.locator("[data-suitor-id='4']")).isInViewport();
         assertThat(page.locator("[data-suitor-id='3']")).isInViewport(); // at least one row above for orientation
         assertThat(page.locator("[data-suitor-id='0']")).not().isInViewport();
-    }
-
-    private void pick(Page page, Suitor suitor) {
-        String name = "Mr " + suitor.getFirstName() + " " + suitor.getLastName();
-        page.locator(".finalists li").filter(new Locator.FilterOptions().setHasText(name))
-                .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("This is Mr Right"))
-                .click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Yes, it's him!")).click();
     }
 }

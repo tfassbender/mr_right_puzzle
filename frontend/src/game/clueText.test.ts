@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Clue } from '../api/gamesApi';
-import { clueText } from './clueText';
+import { ageOf, clueText, formatHeight, valueText } from './clueText';
 
 describe('clueText', () => {
   it('renders every clue type with its parameters', () => {
@@ -21,5 +21,37 @@ describe('clueText', () => {
     ];
 
     clues.forEach(([clue, text]) => expect(clueText(clue)).toBe(text));
+  });
+
+  describe("Eva's rules", () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('has one text per criterion', () => {
+      expect(clueText({ type: 'ATTRIBUTE_IS', attribute: 'VEHICLE', value: 'CAR' }, 'EVA')).toBe('He has a car.');
+      expect(clueText({ type: 'ATTRIBUTE_IS_NOT', attribute: 'JOB', value: 'NONE' }, 'EVA')).toBe('He has a job.');
+      expect(clueText({ type: 'ATTRIBUTE_BETWEEN', attribute: 'HEIGHT', min: 188, max: 195 }, 'EVA')).toBe(
+        'He is between 1.88 and 1.95 m tall.',
+      );
+    });
+
+    it('turns birth years into ages of the current year', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-11-03T12:00:00Z'));
+
+      // Born 1984–1997: between 29 and 42 in 2026, a year older in 2027.
+      const age = { type: 'ATTRIBUTE_BETWEEN', attribute: 'BIRTH_YEAR', min: 1984, max: 1997 } as const;
+      expect(clueText(age, 'EVA')).toBe('He is between 29 and 42 years old.');
+      expect(valueText('BIRTH_YEAR', '1995')).toBe('31 years');
+
+      vi.setSystemTime(new Date('2027-01-01T12:00:00Z'));
+      expect(clueText(age, 'EVA')).toBe('He is between 30 and 43 years old.');
+    });
+
+    it('shows heights in metres', () => {
+      expect(formatHeight(191)).toBe('1.91');
+      expect(formatHeight(200)).toBe('2.00');
+      expect(valueText('HEIGHT', '188')).toBe('1.88 m');
+      expect(ageOf(1994, new Date('2026-06-01'))).toBe(32);
+    });
   });
 });

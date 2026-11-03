@@ -1,7 +1,7 @@
 import type { GameDto } from '../api/gamesApi';
 import { attributeName, clueText, valueText } from '../game/clueText';
 import { m } from '../i18n/i18n';
-import { attributesOf } from '../game/ruleSets';
+import { attributesOf, hasNameClues } from '../game/ruleSets';
 import { AttributeIcon } from './AttributeIcons';
 
 interface CluePanelProps {
@@ -26,16 +26,17 @@ export function CluePanel({ game, open, onClose }: CluePanelProps) {
         </p>
         <ol class="clue-list">
           {game.clues.map((clue, index) => (
-            <li key={index}>{clueText(clue)}</li>
+            <li key={index}>{clueText(clue, game.ruleSet)}</li>
           ))}
         </ol>
-        <p class="muted">{m.clues_vowels_note()}</p>
+        {hasNameClues(game.ruleSet) && <p class="muted">{m.clues_vowels_note()}</p>}
         <h2>{m.game_legend()}</h2>
         <dl class="legend">
-          {attributesOf(game.ruleSet).map(({ attribute, values }) => (
+          {attributesOf(game.ruleSet).map(({ attribute, values, number }) => (
             <div key={attribute}>
               <dt>{attributeName(attribute)}</dt>
               <dd>
+                {number && <span class="legend-entry">{legendText(attribute)}</span>}
                 {values.map((value) => (
                   <span key={value} class="legend-entry">
                     <AttributeIcon attribute={attribute} value={value} /> {valueText(attribute, value)}
@@ -48,4 +49,9 @@ export function CluePanel({ game, open, onClose }: CluePanelProps) {
       </div>
     </aside>
   );
+}
+
+/** Number attributes have no value list; the legend says how to read them. */
+function legendText(attribute: string): string {
+  return attribute === 'HEIGHT' ? m.legend_HEIGHT() : m.legend_BIRTH_YEAR();
 }

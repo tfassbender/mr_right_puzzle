@@ -17,6 +17,8 @@ export type Clue =
   | { type: 'INCOME_AT_LEAST'; level: Income }
   | { type: 'ATTRIBUTE_IS_NOT'; attribute: string; value: string }
   | { type: 'ATTRIBUTE_IS_ONE_OF'; attribute: string; values: string[] }
+  | { type: 'ATTRIBUTE_IS'; attribute: string; value: string }
+  | { type: 'ATTRIBUTE_BETWEEN'; attribute: string; min: number; max: number }
   | { type: 'INITIALS_DIFFER' }
   | { type: 'INITIALS_IN_RANGE'; range: 'A_TO_M' | 'N_TO_Z' }
   | { type: 'SURNAME_START_AND_END_DIFFER' }

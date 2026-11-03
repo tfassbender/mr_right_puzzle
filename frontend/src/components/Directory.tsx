@@ -14,10 +14,18 @@ import {
 import type { GameStore } from '../game/gameStore';
 import { markerOf } from '../game/playState';
 import { formatNumber, m } from '../i18n/i18n';
+import { iconRowsOf } from '../game/ruleSets';
 import { AttributeIcons } from './AttributeIcons';
 import { headerAction } from './headerSlot';
 
-const ITEM_HEIGHT = 60;
+// A row with one line of icons; every further line (Eva's rules have two) adds ICON_LINE_HEIGHT.
+const ITEM_HEIGHT_ONE_LINE = 60;
+const ICON_LINE_HEIGHT = 30;
+
+/** All items share one height (also the section headers), so positions are simple multiples of it. */
+function itemHeightOf(ruleSet: string): number {
+  return ITEM_HEIGHT_ONE_LINE + ICON_LINE_HEIGHT * Math.max(0, iconRowsOf(ruleSet).length - 1);
+}
 const OVERSCAN = 10;
 
 export function suitorName(suitor: Suitor): string {
@@ -25,7 +33,7 @@ export function suitorName(suitor: Suitor): string {
 }
 
 /** Tracks the scroll position and height of a scroll container, so only the visible rows are rendered. */
-function useViewport() {
+function useViewport(itemHeight: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [height, setHeight] = useState(800);
@@ -38,9 +46,9 @@ function useViewport() {
     return () => observer.disconnect();
   }, []);
 
-  const scrollToIndex = (index: number) => ref.current?.scrollTo({ top: index * ITEM_HEIGHT });
+  const scrollToIndex = (index: number) => ref.current?.scrollTo({ top: index * itemHeight });
   // Read the height directly: on the first render the ResizeObserver may not have reported it yet.
-  const visibleRows = () => Math.floor((ref.current?.clientHeight ?? height) / ITEM_HEIGHT);
+  const visibleRows = () => Math.floor((ref.current?.clientHeight ?? height) / itemHeight);
   return { ref, scrollTop, height, scrollToIndex, visibleRows, onScroll: () => setScrollTop(ref.current?.scrollTop ?? 0) };
 }
 
@@ -50,7 +58,8 @@ function useViewport() {
  */
 export function Directory({ store }: { store: GameStore }) {
   const { suitorCount } = store.game;
-  const viewport = useViewport();
+  const itemHeight = itemHeightOf(store.game.ruleSet);
+  const viewport = useViewport(itemHeight);
   const perSection = useComputed(() => remainingPerSection(suitorCount, store.state.value.crossedOut));
 
   const jumpToFirstUnmarked = () => {
@@ -69,13 +78,13 @@ export function Directory({ store }: { store: GameStore }) {
   }, []);
 
   const total = itemCount(suitorCount);
-  const first = Math.max(0, Math.floor(viewport.scrollTop / ITEM_HEIGHT) - OVERSCAN);
-  const last = Math.min(total - 1, Math.ceil((viewport.scrollTop + viewport.height) / ITEM_HEIGHT) + OVERSCAN);
+  const first = Math.max(0, Math.floor(viewport.scrollTop / itemHeight) - OVERSCAN);
+  const last = Math.min(total - 1, Math.ceil((viewport.scrollTop + viewport.height) / itemHeight) + OVERSCAN);
 
   const items = [];
   for (let index = first; index <= last; index++) {
     const item = itemAt(index);
-    const style = { top: `${index * ITEM_HEIGHT}px`, height: `${ITEM_HEIGHT}px` };
+    const style = { top: `${index * itemHeight}px`, height: `${itemHeight}px` };
     if (item.kind === 'header') {
       items.push(<SectionHeader key={`s${item.section}`} section={item.section} left={perSection.value[item.section]} suitorCount={suitorCount} style={style} />);
     } else if (item.id < suitorCount) {
@@ -98,8 +107,8 @@ export function Directory({ store }: { store: GameStore }) {
           ))}
         </select>
       )}
-      <div class="directory-scroll" ref={viewport.ref} onScroll={viewport.onScroll} data-item-height={ITEM_HEIGHT}>
-        <div class="directory-content" style={{ height: `${total * ITEM_HEIGHT}px` }}>
+      <div class="directory-scroll" ref={viewport.ref} onScroll={viewport.onScroll} data-item-height={itemHeight}>
+        <div class="directory-content" style={{ height: `${total * itemHeight}px` }}>
           {items}
         </div>
       </div>

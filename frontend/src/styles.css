@@ -657,8 +657,30 @@ select {
   gap: 8px;
 }
 
+/*
+ * Several icon lines: a grid, so every attribute keeps its column from row to row.
+ * The first column is wider for the height ("1.91 m"); --columns counts the other columns.
+ */
+.icons-grid {
+  display: grid;
+  grid-template-columns: 54px repeat(var(--columns), 40px);
+  row-gap: 3px;
+  column-gap: 4px;
+}
+
+.icons-grid .icon {
+  justify-content: flex-start;
+  min-width: 0;
+  font-size: 20px;
+}
+
+.icons-grid .icon-number {
+  font-size: 15px;
+}
+
 .icon {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   justify-content: center;
   min-width: 27px;
@@ -671,6 +693,15 @@ select {
   min-width: 3.2em;
   justify-content: flex-start;
   color: #7a5b12;
+  font-weight: bold;
+}
+
+/* Height and age (Eva's rules): short numbers instead of an icon. */
+.icon-number {
+  min-width: 2.2em;
+  justify-content: flex-start;
+  color: var(--color-text);
+  font-size: 16px;
   font-weight: bold;
 }
 

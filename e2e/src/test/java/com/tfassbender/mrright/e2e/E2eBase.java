@@ -3,9 +3,11 @@ package com.tfassbender.mrright.e2e;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.AriaRole;
+import com.tfassbender.mrright.puzzle.Suitor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -101,7 +103,13 @@ abstract class E2eBase {
     }
 
     static void createGame(Page page, String seed, int suitors, int finalists) {
+        createGame(page, seed, suitors, finalists, null);
+    }
+
+    /** [ruleSet] is the rule set id to choose, or `null` for the default (the book) – then there may be no choice. */
+    static void createGame(Page page, String seed, int suitors, int finalists, String ruleSet) {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("New puzzle")).click();
+        if (ruleSet != null) page.getByLabel("Rule set").selectOption(ruleSet);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(String.valueOf(suitors)).setExact(true)).click();
         page.getByLabel("Finalists").selectOption(String.valueOf(finalists));
         page.getByLabel("Advanced options").check();
@@ -126,6 +134,21 @@ abstract class E2eBase {
         scrollToSuitor(page, id);
         page.locator("[data-suitor-id='" + id + "']").click();
         assertThat(page.locator("[data-suitor-id='" + id + "']")).hasAttribute("aria-pressed", "true");
+    }
+
+    /** "Check" the starred suitors as the finalists, and confirm. */
+    static void submit(Page page, Locator check) {
+        check.click();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Check them")).click();
+    }
+
+    /** Picks a finalist as Mr Right, and confirms. */
+    static void pick(Page page, Suitor suitor) {
+        String name = "Mr " + suitor.getFirstName() + " " + suitor.getLastName();
+        page.locator(".finalists li").filter(new Locator.FilterOptions().setHasText(name))
+                .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("This is Mr Right"))
+                .click();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Yes, it's him!")).click();
     }
 
     /** Taps a suitor's star: marks him as possible match, or removes the mark. */

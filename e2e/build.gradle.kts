@@ -29,6 +29,8 @@ tasks.test {
     systemProperty("playwright.headless", findProperty("headless")?.toString() ?: "true")
     // Frontend under test (Vite dev server by default).
     systemProperty("mrright.e2e.base-url", findProperty("baseUrl")?.toString() ?: "http://localhost:5174")
+    // The dev backend's data directory: tests unlock rule sets by editing a user file, as is done by hand on a server.
+    systemProperty("mrright.e2e.data-dir", findProperty("dataDir")?.toString() ?: rootProject.file("backend/data").absolutePath)
     // Browsers are installed explicitly with installBrowsers.
     environment("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")
 }
