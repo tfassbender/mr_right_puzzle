@@ -49,6 +49,26 @@ class EvaRuleSetTest {
         assertTrue(!clues.getValue(EvaRuleSet.BIRTH_YEAR).allows("1983"))
     }
 
+    @Test
+    fun `Tobias meets every criterion and treats her better than any Mr Right`() {
+        val finale = EvaRuleSet.finale
+        val clues = generate("finale", PuzzleConfig(100, 1)).clues
+
+        assertTrue(clues.all { it.matches(finale.suitor) })
+        assertEquals(EvaRuleSet.attributes.map { it.id }.toSet(), finale.suitor.attributes.keys)
+        assertEquals(10, finale.suitorRating)
+        repeat(200) { index ->
+            assertTrue(finale.mrRightRating("seed-$index") in 5..8)
+        }
+        assertEquals(finale.mrRightRating("fixed"), finale.mrRightRating("fixed"))
+        assertEquals(setOf(5, 6, 7, 8), (0 until 200).map { finale.mrRightRating("s-$it") }.toSet())
+    }
+
+    @Test
+    fun `the book has no finale`() {
+        assertEquals(null, BookRuleSet.finale)
+    }
+
     /** The weights keep the puzzle interesting: a suitor typically fails only a few criteria, not most of them. */
     @Test
     fun `most suitors fail only a few criteria`() {

@@ -5,6 +5,7 @@ import com.tfassbender.mrright.game.GameState
 import com.tfassbender.mrright.game.LoadedGame
 import com.tfassbender.mrright.game.StateUpdate
 import com.tfassbender.mrright.puzzle.Clue
+import com.tfassbender.mrright.puzzle.RuleSets
 import com.tfassbender.mrright.puzzle.Suitor
 import java.time.Instant
 
@@ -73,7 +74,11 @@ data class GameDto(
     val finalistsHash: String,
     val solutionHash: String,
     val state: GameStateDto,
+    val finale: FinaleDto?,
 )
+
+/** The extra suitor after Mr Right is found, and both ratings for the last tie-break ("who treats her better"). */
+data class FinaleDto(val suitor: Suitor, val suitorRating: Int, val mrRightRating: Int)
 
 /** The 409 body: the current server state, so the client can resolve the conflict. */
 data class ConflictResponse(val code: String, val message: String, val state: GameStateDto)
@@ -89,4 +94,5 @@ fun Game.toSummary(): GameSummaryDto = GameSummaryDto(
 fun LoadedGame.toDto(): GameDto = GameDto(
     game.id.toString(), game.name, game.ruleSet, game.seed, game.config.suitorCount, game.config.finalistCount, game.generatorVersion,
     game.createdAt, puzzle.suitors, puzzle.clues, finalistsHash, solutionHash, game.state.toDto(),
+    RuleSets.byId(game.ruleSet)?.finale?.let { FinaleDto(it.suitor, it.suitorRating, it.mrRightRating(game.seed)) },
 )

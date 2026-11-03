@@ -70,6 +70,20 @@ object EvaRuleSet : RuleSet {
 
     private val clueSet: ClueSet = ClueSet(attributes, clues, nameClues = emptyList(), ordered = clues)
 
+    /** Tobias arrives after Mr Right is found: he meets every criterion too, and treats her best (10 of 10). */
+    override val finale: Finale = Finale(
+        suitor = Suitor(
+            Finale.SUITOR_ID, "Tobias", "Faßbender",
+            mapOf(
+                HEIGHT to "188", BIRTH_YEAR to "1995", JOB to "EURO_2", VEHICLE to "CAR", KIDS to "NO_KIDS",
+                VICES to "ALCOHOL_LITTLE", CHARACTER to "LOYAL", MANNER to "OPEN_AND_FUNNY", SOCIAL to "FRIENDS_AND_FAMILY",
+                FOOD to "HEALTHY_FOODIE", LEISURE to "SPONTANEOUS_TRIPS", FITNESS to "FIT",
+            ),
+        ),
+        suitorRating = 10,
+        mrRightRatings = 5..8,
+    )
+
     override fun clues(random: Random, finalistCount: Int): ClueSet = clueSet
 
     /** The right values share [RIGHT_SHARE] of the weight, the wrong ones the rest – evenly within each group. */

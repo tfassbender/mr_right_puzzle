@@ -21,6 +21,9 @@ interface RuleSet {
     /** The fewest consonants Mr Right's name may have – the tie-break is still "fewest consonants wins". */
     val minSolutionConsonants: Int get() = 0
 
+    /** What happens after Mr Right is found, if anything (Eva's rules: one more suitor arrives). */
+    val finale: Finale? get() = null
+
     /** The clues of one puzzle, drawn from [random] (or fixed). They must support [finalistCount] finalists. */
     fun clues(random: Random, finalistCount: Int): ClueSet
 }

@@ -13,6 +13,7 @@ import io.restassured.specification.RequestSpecification
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.notNullValue
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -70,6 +71,7 @@ class GameResourceTest {
             .body("clues[0].type", notNullValue())
             .body("ruleSet", equalTo("BOOK"))
             .body("suitors[0].attributes.EYE_COLOR", notNullValue())
+            .body("finale", nullValue())
             .body("finalistsHash", notNullValue())
             .body("state.version", equalTo(0))
             .body("name", equalTo("Sunday puzzle"))
@@ -113,6 +115,9 @@ class GameResourceTest {
             .body("ruleSet", equalTo("EVA"))
             .body("suitors[0].attributes.HEIGHT", notNullValue())
             .body("clues", hasSize<Any>(12))
+            .body("finale.suitor.lastName", equalTo("Faßbender"))
+            .body("finale.suitorRating", equalTo(10))
+            .body("finale.mrRightRating", notNullValue())
     }
 
     @Test
