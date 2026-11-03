@@ -114,7 +114,7 @@ export function GamesPage() {
       <ul class="game-list">
         {games?.map((game) => <GameItem key={game.id} game={game} onDelete={() => setToDelete(game)} />)}
       </ul>
-      {introOpen && <IntroDialog onClose={() => setIntroOpen(false)} />}
+      {introOpen && <IntroDialog ruleSets={user.ruleSets ?? [BOOK]} onClose={() => setIntroOpen(false)} />}
       {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
       {toDelete && (
         <ConfirmDialog

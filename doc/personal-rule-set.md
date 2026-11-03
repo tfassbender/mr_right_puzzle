@@ -120,4 +120,4 @@ The finale shows the names without small caps – they would turn the ß in "Fa�
 
 ## Still open
 
-- **Q4** – Intro text (story & rules) – later, as planned.
+- Intro text: done – "Eva's search for Mr Right" in the "Story & rules" dialog (texts `intro_EVA_*`).

@@ -335,6 +335,10 @@ select {
   overflow-y: auto;
 }
 
+.intro-rule-set {
+  margin-bottom: 8px;
+}
+
 .intro-content h3 {
   margin: 16px 0 8px;
   font-size: 1.05rem;

@@ -168,7 +168,7 @@ rule set in 8c, once her rule is known.
 **Status:** the book is named "Classic" / "Klassisch". With only the book in the code, the unlocked path
 (dropdown shown, game created with another rule set) can't be tested yet – it gets tests with her rule set in 8c.
 
-### 8c – The personal rule set ("Eva's rules")
+### 8c – The personal rule set ("Eva's rules") ✅
 
 **Exit criteria:** she can create and solve a puzzle with her criteria on a phone.
 
@@ -176,7 +176,7 @@ rule set in 8c, once her rule is known.
 - [x] The fixed clues and their texts; the generator works with fixed clues (finalists and near misses
       possible for every clue – checked by a test, since the parameters can't be re-rolled)
 - [x] Tie-break rule: fewest consonants, Mr Right has at least 9
-- [ ] Rule-set-specific intro ("Story & rules") – text to be written
+- [x] Rule-set-specific intro ("Story & rules"): a rule set choice in the dialog, Eva's story first
 - [x] Generator tests over many seeds, e2e: unlock, create and solve
 
 **Status:** new clue types `ATTRIBUTE_IS` and `ATTRIBUTE_BETWEEN`, weighted attribute values (80 % right per
