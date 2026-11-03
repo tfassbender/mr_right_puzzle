@@ -70,6 +70,8 @@ class GameE2eTest extends E2eBase {
 
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("My puzzles").setExact(true)).first().click();
         assertThat(page.getByTestId("game-item")).containsText("Solved – Mr Right found!");
+        // Full, although the finalists were never crossed out.
+        assertThat(page.getByTestId("game-item").locator(".progress-bar")).hasAttribute("style", "width: 100%;");
         assertThat(page.getByTestId("game-item")).containsText("wrong guesses: 2");
         assertThat(page.getByTestId("game-item")).containsText("Mr Right - "); // the suggested default name
     }

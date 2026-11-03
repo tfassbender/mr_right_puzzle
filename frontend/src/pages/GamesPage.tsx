@@ -148,7 +148,8 @@ function gameTitle(game: GameSummary): string {
 }
 
 function GameItem({ game, onDelete }: { game: GameSummary; onDelete: () => void }) {
-  const percent = Math.round((game.crossedOutCount / game.suitorCount) * 100);
+  // The finalists are never crossed out, so a solved game would stop just short of 100 %.
+  const percent = game.solved ? 100 : Math.round((game.crossedOutCount / game.suitorCount) * 100);
   const title = (
     <>
       <strong>{gameTitle(game)}</strong>
